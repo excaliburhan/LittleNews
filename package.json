@@ -1,0 +1,20 @@
+{
+  "name": "LittleNews",
+  "version": "0.0.1",
+  "description": "A news app via electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "sh run.sh",
+    "build": "electron-packager ./ LittleNews --platform=darwin --arch=x64 --icon=app.icns --asar --overwrite --ignore=Electron.app\\|.DS_Store"
+  },
+  "keywords": [
+    "electron",
+    "news"
+  ],
+  "author": "xiaoping",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^1.4.1",
+    "electron-packager": "^8.1.0"
+  }
+}
