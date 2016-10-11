@@ -8,7 +8,9 @@
   "ecmaFeatures": {
     "es6": true
   },
-  "globals": {},
+  "globals": {
+    "module": true
+  },
   "plugins": [
     "html"
   ],

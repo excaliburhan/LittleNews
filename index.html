@@ -2,7 +2,14 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>LittleNews - Customize Your Own News</title>
+    <link rel="stylesheet" href="./css/bundle.min.css" />
+    <script>
+      if (typeof module === 'object') {
+        window.module = module
+        module = undefined
+      }
+    </script>
   </head>
   <body>
     <h1>Hello World!</h1>
@@ -11,9 +18,8 @@
     Chromium <script>document.write(process.versions.chrome)</script>,
     and Electron <script>document.write(process.versions.electron)</script>.
   </body>
-
+  <script src="./js/bundle.min.js"></script>
   <script>
-    // You can also require other files to run in this process
-    // require('./renderer.js')
+    if (window.module) module = window.module
   </script>
 </html>
