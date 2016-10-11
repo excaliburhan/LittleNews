@@ -1,0 +1,150 @@
+/**
+ *
+ * @author xiaoping (edwardhjp@gmail.com)
+ * @type css
+ * @index
+ */
+
+body {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-family:PingFang SC, Hiragino Sans GB, Microsoft Yahei, WenQuanYi Micro Hei, sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+#body {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+#list {
+  position: relative;
+  flex: 3;
+  max-width: 280px;
+  color: rgba(0, 0, 0, 0.6);
+  background: #efefef;
+  .listContainer {
+    position: absolute;
+    top: 0;
+    bottom: 50px;
+    left: 0;
+    right: 0;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+      width: 0;
+      background: transparent;
+    }
+    & > .listItem {
+      display: flex;
+      box-sizing: border-box;
+      height: 100px;
+      background: #555;
+      border-bottom: 1px solid #fff;
+      cursor: pointer;
+      & > .listItemIcon {
+        width: 60px;
+        height: 60px;
+        padding: 20px 10px;
+      }
+      & > .listItemInfo {
+        flex: 1;
+        padding: 20px 10px;
+        h2 {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          margin: 0;
+          margin-bottom: 5px;
+          font-size: 20px;
+          color: #fff;
+        }
+        p {
+          margin: 0;
+          overflow : hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          color: #eee;
+        }
+      }
+      &:hover {
+        background: #333;
+      }
+      &:last-child {
+        border-bottom: none;
+      }
+      &.selected {
+        background: #272727;
+      }
+    }
+    &:empty {
+      &::after {
+        position: absolute;
+        content: '还没有任何消息源';
+        width: 100%;
+        line-height: 50px;
+        text-align: center;
+      }
+    }
+  }
+  .listBtns {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    line-height: 50px;
+    & > div {
+      flex: 1;
+      color: #fff;
+      text-align: center;
+      cursor: pointer;
+      &.addBtn {
+        background: #13ce66;
+        &:hover {
+          background: #0fb950;
+        }
+      }
+      &.manageBtn {
+        background: #50bfff;
+        &:hover {
+          background: #41aaeb;
+        }
+      }
+    }
+  }
+}
+#detail {
+  flex: 7;
+}
+
+#add {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  &.show {
+    display: block;
+  }
+}
+
+#manage {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  &.show {
+    display: block;
+  }
+}

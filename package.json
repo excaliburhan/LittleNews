@@ -4,7 +4,7 @@
   "description": "A news app via electron",
   "main": "main.js",
   "scripts": {
-    "start": "sh run.sh",
+    "start": "sh run.sh & gulp",
     "build:dev": "electron-packager ./ LittleNewsDev --platform=darwin --arch=x64 --icon=app.icns --overwrite --ignore=.*darwin-x64\\($\\|/\\)\\|Electron.app\\|.DS_Store",
     "build": "electron-packager ./ LittleNews --platform=darwin --arch=x64 --icon=app.icns --asar --overwrite --ignore=.*darwin-x64\\($\\|/\\)\\|Electron.app\\|.DS_Store"
   },

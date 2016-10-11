@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>LittleNews - Customize Your Own News</title>
     <link rel="stylesheet" href="./css/bundle.min.css" />
     <script>
@@ -12,11 +12,45 @@
     </script>
   </head>
   <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using node <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+    <div id="body">
+      <div id="list">
+        <!-- <div class="listContainer"></div> -->
+        <div class="listContainer">
+          <div class="listItem selected">
+            <img class="listItemIcon" src="https://o2znrmehg.qnssl.com/news/zh.png" alt="" />
+            <div class="listItemInfo">
+              <h2>知乎日报[API]</h2>
+              <p>知乎日报 - 最新日报最新日报最新日报最新日报最新日报最新日报最新日报</p>
+            </div>
+          </div>
+          <div class="listItem">
+            <img class="listItemIcon" src="https://o2znrmehg.qnssl.com/news/zh.png" alt="" />
+            <div class="listItemInfo">
+              <h2>知乎日报[API]</h2>
+              <p>知乎日报 - 最新日报最新日报最新日报最新日报最新日报最新日报最新日报</p>
+            </div>
+          </div>
+          <div class="listItem">
+            <img class="listItemIcon" src="https://o2znrmehg.qnssl.com/news/zh.png" alt="" />
+            <div class="listItemInfo">
+              <h2>知乎日报[API]</h2>
+              <p>知乎日报 - 最新日报最新日报最新日报最新日报最新日报最新日报最新日报</p>
+            </div>
+          </div>
+        </div>
+        <div class="listBtns">
+          <div class="addBtn">Add</div>
+          <div class="manageBtn">Manage</div>
+        </div>
+      </div>
+      <div id="detail"></div>
+    </div>
+    <div id="add">
+      im add page
+    </div>
+    <div id="manage">
+      im manage page
+    </div>
   </body>
   <script src="./js/bundle.min.js"></script>
   <script>
