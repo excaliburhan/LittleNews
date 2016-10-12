@@ -5,7 +5,11 @@
  * @main js entry
  */
 
-const { app, BrowserWindow } = require('electron')
+const electron = require('electron')
+const app = electron.app
+const BrowserWindow = electron.BrowserWindow
+const ipcMain = electron.ipcMain
+const dialog = electron.dialog
 let mainWindow
 
 function createWindow() {
@@ -13,23 +17,32 @@ function createWindow() {
   mainWindow.loadURL(`file://${__dirname}/index.html`)
 
   // Open the DevTools
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   // Emitted when the window is closed
   mainWindow.on('closed', () => {
     mainWindow = null
   })
 }
 
+// ready
 app.on('ready', createWindow)
 
+// close
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
 
+// active
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+// ipc
+ipcMain.on('msg', (e, arg) => {
+  // console.log(e)
+  dialog.showErrorBox('Tips', arg)
 })

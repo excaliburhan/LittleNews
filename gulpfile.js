@@ -51,7 +51,7 @@ gulp.task('img', () => {
 })
 
 gulp.task('reload', () => {
-  gulp.watch(paths.js, ['js'])
+  // gulp.watch(paths.js, ['js'])
   gulp.watch(paths.css, ['css'])
   gulp.watch(paths.img, ['img'])
 })

@@ -39,20 +39,112 @@
           </div>
         </div>
         <div class="listBtns">
-          <div class="addBtn">Add</div>
-          <div class="manageBtn">Manage</div>
+          <div class="addBtn">
+            <i class="iconfont">&#xe601;</i>
+            <span>Add</span>
+          </div>
+          <div class="manageBtn">
+            <i class="iconfont">&#xe602;</i>
+            <span>Manage</span>
+          </div>
         </div>
       </div>
       <div id="detail"></div>
     </div>
     <div id="add">
-      im add page
+      <div class="backBtn">
+        <i class="iconfont">&#xe600;</i>
+        <span>Home</span>
+      </div>
+      <ul class="addForm">
+        <li class="addItem addRadio">
+          <div class="addItemLabel">Type(*)</div>
+          <div class="addRadioBtns">
+            <label class="addRadioBtn">
+              <input class="addType" type="radio" name="type" value="Crawler" checked>
+              <span>Crawler</span>
+            </label>
+            <label class="addRadioBtn">
+              <input class="addType" type="radio" name="type" value="API">
+              <span>API</span>
+            </label>
+          </div>
+        </li>
+        <li class="addItem addInput">
+          <div class="addItemLabel">Name(*)</div>
+          <label class="addInputLabel">
+            <input class="addName" type="text" placeholder="The name of news">
+          </label>
+        </li>
+        <li class="addItem addInput">
+          <div class="addItemLabel">Digest(*)</div>
+          <label class="addInputLabel">
+            <input class="addDigest" type="text" placeholder="The digest of news">
+          </label>
+        </li>
+        <li class="addItem addInput">
+          <div class="addItemLabel">Url(*)</div>
+          <label class="addInputLabel">
+            <input class="addUrl" type="text" placeholder="The url of page/api">
+          </label>
+        </li>
+        <li class="addItem addInput">
+          <div class="addItemLabel">Icon</div>
+          <label class="addInputLabel">
+            <input class="addIcon" type="text" placeholder="The src of news icon">
+          </label>
+        </li>
+        <div class="addLine"></div>
+        <li class="addItem addInput">
+          <div class="addItemLabel">Item(*, for Crawler use selector, eg ".item", for API use arrName, eg "list")</div>
+          <label class="addInputLabel">
+            <input class="addNewsItem" type="text" placeholder="The wrapper of news item">
+          </label>
+        </li>
+        <li class="addItem addInput">
+          <div class="addItemLabel">Title(*, must be child of Item, for Crawler use selector, eg ".title", for API use key of object, eg "title")</div>
+          <label class="addInputLabel">
+            <input class="addNewsTitle" type="text" placeholder="The title of news item">
+          </label>
+        </li>
+        <li class="addItem addInput">
+          <div class="addItemLabel">Href(*, same as Title above)</div>
+          <label class="addInputLabel">
+            <input class="addNewsHref" type="text" placeholder="The link of news item">
+          </label>
+        </li>
+        <li class="addItem addInput">
+          <div class="addItemLabel">Thumbnail(same as Title above)</div>
+          <label class="addInputLabel">
+            <input class="addNewsImg" type="text" placeholder="The thumbnail of news item">
+          </label>
+        </li>
+        <li class="addItem addInput">
+          <div class="addItemLabel">Content(same as Title above)</div>
+          <label class="addInputLabel">
+            <input class="addNewsContent" type="text" placeholder="The content of news item">
+          </label>
+        </li>
+      </ul>
+      <div class="submitBtns">
+        <div class="submitAddBtn">
+          <i class="iconfont">&#xe601;</i>
+          <span>Submit</span>
+        </div>
+        <div class="submitTestBtn">
+          <i class="iconfont">&#xe608;</i>
+          <span>Test</span>
+        </div>
+      </div>
     </div>
     <div id="manage">
-      im manage page
+      <div class="backBtn">
+        <i class="iconfont">&#xe600;</i>
+        <span>Home</span>
+      </div>
     </div>
   </body>
-  <script src="./js/bundle.min.js"></script>
+  <script src="./js/app.js"></script>
   <script>
     if (window.module) module = window.module
   </script>

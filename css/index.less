@@ -5,6 +5,16 @@
  * @index
  */
 
+ @font-face {
+   font-family: 'iconfont';
+   src: url('../assets/iconfont.ttf') format('truetype');
+ }
+ .iconfont {
+   font-family: 'iconfont';
+   font-size: 16px;
+   font-style: normal;
+ }
+
 body {
   position: absolute;
   top: 0;
@@ -124,15 +134,145 @@ body {
 }
 
 #add {
-  display: none;
+  // display: none;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background: #fff;
+  overflow-y: scroll;
   &.show {
     display: block;
+  }
+
+  .backBtn {
+    display: inline-block;
+    margin: 20px 20px 0 20px;
+    padding: 0 15px 0 10px;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    background: #50bfff;
+    border-radius: 4px;
+    cursor: pointer;
+    &:hover {
+      background: #41aaeb;
+    }
+  }
+  .addForm {
+    padding: 0;
+    margin: 20px 20px 0 20px;
+    & > li {
+      list-style: none;
+      margin-top: 15px;
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+    .addLine {
+      margin-top: 20px;
+      border-bottom: 1px solid #c0ccda;
+    }
+    .addItemLabel {
+      margin-bottom: 3px;
+    }
+    .addInputLabel {
+      & > input {
+        display: block;
+        padding: 3px 10px;
+        box-sizing: border-box;
+        width: 500px;
+        height: 36px;
+        color: #1f2d3d;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #c0ccda;
+        border-radius: 4px;
+        transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+        outline: none;
+        font-size: inherit;
+        &:hover {
+          border-color: #8793A5;
+        }
+        &:focus {
+          border-color: #20a0ff;
+        }
+      }
+    }
+    .addRadioBtns {
+      display: flex;
+      & > label {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        &:not(:last-child) {
+          margin-right: -1px;
+        }
+        &:first-child span {
+          border-radius: 4px 0 0 4px;
+        }
+        &:last-child span {
+          border-radius: 0 4px 4px 0;
+        }
+        input {
+          opacity: 0;
+          outline: none;
+          position: absolute;
+          z-index: -1;
+          left: -999px;
+          &:checked + span {
+            z-index: 1;
+            color: #20a0ff;
+            border-color: #20a0ff;
+          }
+        }
+        span {
+          display: inline-block;
+          white-space: nowrap;
+          vertical-align: middle;
+          background: #fff;
+          border: 1px solid #c0ccda;
+          color: #1f2d3d;
+          text-align: center;
+          box-sizing: border-box;
+          margin: 0;
+          position: relative;
+          cursor: pointer;
+          transition: border-color .2s cubic-bezier(.645,.045,.355,1),color .2s cubic-bezier(.645,.045,.355,1);
+          padding: 5px 15px;
+          font-size: 16px;
+          border-radius: 0;
+        }
+      }
+    }
+  }
+  .submitBtns {
+    overflow: hidden;
+    margin: 20px 20px 0 20px;
+    padding-bottom: 50px;
+    width: 200px;
+    & > div {
+      float: left;
+      width: 90px;
+      height: 40px;
+      line-height: 40px;
+      color: #fff;
+      text-align: center;
+      background: #13ce66;
+      border-radius: 4px;
+      cursor: pointer;
+      &:hover {
+        background: #0fb950;
+      }
+      &.submitAddBtn {
+        margin-right: 20px;
+        background: #50bfff;
+        &:hover {
+          background: #41aaeb;
+        }
+      }
+    }
   }
 }
 
@@ -144,7 +284,23 @@ body {
   right: 0;
   bottom: 0;
   background: #fff;
+  overflow-y: scroll;
   &.show {
     display: block;
+  }
+
+  .backBtn {
+    display: inline-block;
+    margin: 20px 20px 0 20px;
+    padding: 0 15px 0 10px;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    background: #50bfff;
+    border-radius: 4px;
+    cursor: pointer;
+    &:hover {
+      background: #41aaeb;
+    }
   }
 }
