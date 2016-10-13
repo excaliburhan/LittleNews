@@ -15,6 +15,7 @@ const add = require('./js/add.js')
 const manage = require('./js/manage.js')
 let ajaxing = false
 let pageNum = 1
+let isModified = false
 
 function loadDetail(id, page) {
   const subObj = store.get('subObj')
@@ -172,6 +173,7 @@ function loadList() {
     $('.listContainer').html(tpl)
     firstId && loadDetail(firstId)
   }
+  isModified = false
 }
 
 function init() {
@@ -200,7 +202,7 @@ function init() {
     } else if (tag.closest('.backBtn').length) {
       $('#add').removeClass('show')
       $('#manage').removeClass('show')
-      loadList()
+      isModified && loadList()
     } else if (tag.closest('.listItem').length) {
       const theTag = tag.closest('.listItem')
       const id = $(theTag).attr('data-id')
@@ -220,12 +222,14 @@ function init() {
         manage.toggleNews(id, 'off')
         $(theTag).html('<i class="iconfont">&#xe606;</i><span>Open</span>').addClass('off')
       }
+      isModified = true
     } else if (tag.closest('.manageItemDel').length) {
       const theTag = tag.closest('.manageItemDel')
       const id = $(theTag).parent().attr('data-id')
       console.log(id)
       $(theTag).closest('.manageItem').remove()
       manage.deleteNews(id)
+      isModified = true
     }
   })
   $('.detailContainer').on('scroll', (e) => {
@@ -331,6 +335,7 @@ function init() {
           $('.addLoading').removeClass('show')
           add.doSubmit(params)
           ipcRenderer.send('msg', 'Success')
+          isModified = true
         })
         .fail(() => {
           $('.addLoading').removeClass('show')
