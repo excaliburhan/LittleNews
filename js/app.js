@@ -10,6 +10,7 @@ const ipcRenderer = electron.ipcRenderer
 const shell = electron.shell
 const $ = require('jquery')
 const cheerio = require('cheerio')
+const menu = require('./js/menu.js')
 const store = require('./js/store.js')
 const add = require('./js/add.js')
 const manage = require('./js/manage.js')
@@ -207,6 +208,7 @@ function loadList() {
 }
 
 function init() {
+  menu.initMenu()
   // load
   loadList()
 
