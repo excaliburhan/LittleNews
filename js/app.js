@@ -28,6 +28,7 @@ function loadDetail(id, page) {
     url = theSub.url + query
   }
   if (ajaxing || (!theSub.page && page)) {
+    console.log(ajaxing)
     return
   } else if (!page) {
     $('.detailContainer').html('')
@@ -98,6 +99,35 @@ function loadDetail(id, page) {
           }
         } catch (ex) {
           // console.log(ex)
+        }
+      } else if (theSub.type === 'RSS') {
+        const channel = $(data).find('channel')
+        const items = channel.find('item')
+        let tpl = ''
+        for (let i = 0; i < items.length; i++) {
+          const title = $(items[i]).find('title').text()
+          const href = $(items[i]).find('link').text()
+          const content =
+            $(items[i]).find('description').text().replace(/<\/?[^>]*>/g, '').substr(0, 200)
+          const authorDesc = ''
+          tpl +=
+            `<div class="detailItem data-id="${i}">` +
+              `<a href="${href}">` +
+                '<div class="detailItemIcon">' +
+                  '<img src="img/newsImg.png" alt="" />' +
+                '</div>' +
+                '<div class="detailItemInfo">' +
+                  `<h2>${title}</h2>` +
+                  `<p>${content || 'There is no description'}</p>` +
+                  `<p class='detailAuthor'>${authorDesc}</p>` +
+                '</div>' +
+              '</a>' +
+            '</div>'
+        }
+        if (!page) {
+          $('.detailContainer').html(tpl)
+        } else {
+          container.append(tpl)
         }
       } else if (theSub.type === 'API') {
         const items = data[theSub.newsItem]
@@ -226,7 +256,6 @@ function init() {
     } else if (tag.closest('.manageItemDel').length) {
       const theTag = tag.closest('.manageItemDel')
       const id = $(theTag).parent().attr('data-id')
-      console.log(id)
       $(theTag).closest('.manageItem').remove()
       manage.deleteNews(id)
       isModified = true
@@ -272,7 +301,7 @@ function init() {
       params.newsTitle,
       params.newsHref,
     ]
-    if (add.validate(arr)) {
+    if (add.validate(arr) || params.type === 'RSS') { // rss dont need most params
       if (ajaxing) return
       $.ajax({
         url: params.url,
@@ -283,19 +312,20 @@ function init() {
       })
         .done((data) => {
           $('.addLoading').removeClass('show')
+          ajaxing = false
           if (add.doTest(data, params)) {
             ipcRenderer.send('msg', 'Test passed')
           } else {
             ipcRenderer.send('msg', 'You haven\'t pass the test, please check your settings')
           }
-          ajaxing = false
         })
         .fail(() => {
           $('.addLoading').removeClass('show')
-          ipcRenderer.send('msg', 'Failed to load page')
           ajaxing = false
+          ipcRenderer.send('msg', 'Failed to load page')
         })
     } else {
+      ajaxing = false
       ipcRenderer.send('msg', 'You haven\'t fill all required params')
     }
   })
@@ -322,25 +352,26 @@ function init() {
       params.newsTitle,
       params.newsHref,
     ]
-    if (add.validate(arr)) {
+    if (add.validate(arr) || params.type === 'RSS') {
       if (ajaxing) return
       $.ajax({
         url: params.url,
         beforeSend: () => {
+          ajaxing = true
           $('.addLoading').addClass('show')
         },
       })
-        .done(() => {
-          ajaxing = true
+        .done((data) => {
           $('.addLoading').removeClass('show')
-          add.doSubmit(params)
-          ipcRenderer.send('msg', 'Success')
+          add.doSubmit(params, data)
+          ajaxing = false
           isModified = true
+          ipcRenderer.send('msg', 'Success')
         })
         .fail(() => {
           $('.addLoading').removeClass('show')
-          ipcRenderer.send('msg', 'Failed to load page')
           ajaxing = false
+          ipcRenderer.send('msg', 'Failed to load page')
         })
     } else {
       ipcRenderer.send('msg', 'You haven\'t fill all required params')
