@@ -12,13 +12,24 @@ const $ = require('jquery')
 const cheerio = require('cheerio')
 const store = require('./js/store.js')
 const add = require('./js/add.js')
+let ajaxing = false
+let pageNum = 1
 
-function loadDetail(id) {
+function loadDetail(id, page) {
   const subObj = store.get('subObj')
   const theSub = subObj[id]
+  let url
+  if (!page || !theSub.page) {
+    url = theSub.url
+  } else {
+    const query = theSub.page.replace(/\{\w+\}/, page)
+    url = theSub.url + query
+  }
+  if (ajaxing || (!theSub.page && page)) return // ajaxing or no page setting
   $.ajax({
-    url: theSub.url,
+    url,
     beforeSend: () => {
+      ajaxing = true
       $('.detailLoading').addClass('show')
     },
   })
@@ -26,8 +37,8 @@ function loadDetail(id) {
       $('.detailLoading').removeClass('show')
       const now = new Date().toLocaleString()
       const timeTpl = `<i class="iconfont">&#xe604;</i><span>Last Sync Time: ${now}</span>`
+      const container = $('.detailContainer')
       $('.detailLastTime').html(timeTpl)
-      $('.detailContainer').html('')
       if (theSub.type === 'Crawler') {
         const $c = cheerio.load(data)
         try {
@@ -59,7 +70,12 @@ function loadDetail(id) {
                 '</a>' +
               '</div>'
           }
-          $('.detailContainer').html(tpl)
+          if (!page) {
+            pageNum = 1
+            $('.detailContainer').html(tpl)
+          } else {
+            container.append(tpl)
+          }
         } catch (ex) {
           // console.log(ex)
         }
@@ -92,13 +108,19 @@ function loadDetail(id) {
               '</a>' +
             '</div>'
         }
-        $('.detailContainer').html(tpl)
+        if (!page) {
+          $('.detailContainer').html(tpl)
+        } else {
+          container.append(tpl)
+        }
       }
+      ajaxing = false
       return false
     })
     .fail(() => {
       $('.detailLoading').removeClass('show')
-      ipcRenderer.send('msg', 'Failed to load page')
+      // ipcRenderer.send('msg', 'Failed to load page')
+      ajaxing = false
     })
 }
 
@@ -171,6 +193,21 @@ function init() {
     const id = $('.listItem.selected').attr('data-id')
     loadDetail(id)
   })
+  $('.detailContainer').on('scroll', (e) => {
+    if (ajaxing) {
+      e.preventDefault()
+      return
+    }
+    const tag = e.target
+    const scrollH = tag.scrollHeight
+    const clientH = tag.clientHeight
+    const scrollTop = tag.scrollTop
+    if (scrollH - clientH - scrollTop <= 0) {
+      const id = $('.listItem.selected').attr('data-id')
+      pageNum++
+      loadDetail(id, pageNum)
+    }
+  })
 
   // page add
   $('.submitTestBtn').on('click', () => {
@@ -197,9 +234,11 @@ function init() {
       params.newsHref,
     ]
     if (add.validate(arr)) {
+      if (ajaxing) return
       $.ajax({
         url: params.url,
         beforeSend: () => {
+          ajaxing = true
           $('.addLoading').addClass('show')
         },
       })
@@ -210,10 +249,12 @@ function init() {
           } else {
             ipcRenderer.send('msg', 'You haven\'t pass the test, please check your settings')
           }
+          ajaxing = false
         })
         .fail(() => {
           $('.addLoading').removeClass('show')
           ipcRenderer.send('msg', 'Failed to load page')
+          ajaxing = false
         })
     } else {
       ipcRenderer.send('msg', 'You haven\'t fill all required params')
@@ -225,6 +266,7 @@ function init() {
       name: $('.addName').val(),
       digest: $('.addDigest').val(),
       url: $('.addUrl').val(),
+      page: $('.addPage').val(),
       icon: $('.addIcon').val(),
       newsItem: $('.addNewsItem').val(),
       newsTitle: $('.addNewsTitle').val(),
@@ -242,6 +284,7 @@ function init() {
       params.newsHref,
     ]
     if (add.validate(arr)) {
+      if (ajaxing) return
       $.ajax({
         url: params.url,
         beforeSend: () => {
@@ -249,6 +292,7 @@ function init() {
         },
       })
         .done(() => {
+          ajaxing = true
           $('.addLoading').removeClass('show')
           add.doSubmit(params)
           ipcRenderer.send('msg', 'Success')
@@ -256,6 +300,7 @@ function init() {
         .fail(() => {
           $('.addLoading').removeClass('show')
           ipcRenderer.send('msg', 'Failed to load page')
+          ajaxing = false
         })
     } else {
       ipcRenderer.send('msg', 'You haven\'t fill all required params')
