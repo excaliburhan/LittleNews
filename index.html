@@ -14,30 +14,7 @@
   <body>
     <div id="body">
       <div id="list">
-        <!-- <div class="listContainer"></div> -->
-        <div class="listContainer">
-          <div class="listItem selected">
-            <img class="listItemIcon" src="https://o2znrmehg.qnssl.com/news/zh.png" alt="" />
-            <div class="listItemInfo">
-              <h2>知乎日报[API]</h2>
-              <p>知乎日报 - 最新日报最新日报最新日报最新日报最新日报最新日报最新日报</p>
-            </div>
-          </div>
-          <div class="listItem">
-            <img class="listItemIcon" src="https://o2znrmehg.qnssl.com/news/zh.png" alt="" />
-            <div class="listItemInfo">
-              <h2>知乎日报[API]</h2>
-              <p>知乎日报 - 最新日报最新日报最新日报最新日报最新日报最新日报最新日报</p>
-            </div>
-          </div>
-          <div class="listItem">
-            <img class="listItemIcon" src="https://o2znrmehg.qnssl.com/news/zh.png" alt="" />
-            <div class="listItemInfo">
-              <h2>知乎日报[API]</h2>
-              <p>知乎日报 - 最新日报最新日报最新日报最新日报最新日报最新日报最新日报</p>
-            </div>
-          </div>
-        </div>
+        <div class="listContainer"></div>
         <div class="listBtns">
           <div class="addBtn">
             <i class="iconfont">&#xe601;</i>
@@ -49,7 +26,14 @@
           </div>
         </div>
       </div>
-      <div id="detail"></div>
+      <div id="detail">
+        <div class="detailLastTime"></div>
+        <div class="detailContainer"></div>
+        <div class="detailLoading">
+          <i class="iconfont">&#xe605;</i>
+        </div>
+        </div>
+      </div>
     </div>
     <div id="add">
       <div class="backBtn">
@@ -85,7 +69,13 @@
         <li class="addItem addInput">
           <div class="addItemLabel">Url(*)</div>
           <label class="addInputLabel">
-            <input class="addUrl" type="text" placeholder="The url of page/api">
+            <input class="addUrl" type="text" placeholder="The url of web/api">
+          </label>
+        </li>
+        <li class="addItem addInput">
+          <div class="addItemLabel">Page</div>
+          <label class="addInputLabel">
+            <input class="addPage" type="text" placeholder="The settings of page, concat Url and use {xx} for RegExp">
           </label>
         </li>
         <li class="addItem addInput">
@@ -110,7 +100,7 @@
         <li class="addItem addInput">
           <div class="addItemLabel">Href(*, same as Title above)</div>
           <label class="addInputLabel">
-            <input class="addNewsHref" type="text" placeholder="The link of news item">
+            <input class="addNewsHref" type="text" placeholder="The link of news item, use {xx} for RegExp">
           </label>
         </li>
         <li class="addItem addInput">
@@ -125,6 +115,12 @@
             <input class="addNewsContent" type="text" placeholder="The content of news item">
           </label>
         </li>
+        <li class="addItem addInput">
+          <div class="addItemLabel">Author(same as Title above)</div>
+          <label class="addInputLabel">
+            <input class="addNewsAuthor" type="text" placeholder="The author of news item">
+          </label>
+        </li>
       </ul>
       <div class="submitBtns">
         <div class="submitAddBtn">
@@ -136,11 +132,17 @@
           <span>Test</span>
         </div>
       </div>
+      <div class="addlLoading">
+        <i class="iconfont">&#xe605;</i>
+      </div>
     </div>
     <div id="manage">
       <div class="backBtn">
         <i class="iconfont">&#xe600;</i>
         <span>Home</span>
+        <ul class="manageForm">
+
+        </ul>
       </div>
     </div>
   </body>

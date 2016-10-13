@@ -5,6 +5,15 @@
  * @index
  */
 
+ @keyframes rotate {
+   0% {
+     transform: rotate(0deg);
+   }
+   100% {
+     transform: rotate(360deg);
+  }
+}
+
  @font-face {
    font-family: 'iconfont';
    src: url('../assets/iconfont.ttf') format('truetype');
@@ -56,9 +65,13 @@ body {
       border-bottom: 1px solid #fff;
       cursor: pointer;
       & > .listItemIcon {
+        overflow: hidden;
         width: 60px;
         height: 60px;
         padding: 20px 10px;
+        img {
+          width: 100%;
+        }
       }
       & > .listItemInfo {
         flex: 1;
@@ -130,11 +143,112 @@ body {
   }
 }
 #detail {
+  position: relative;
   flex: 7;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+  }
+  .detailLastTime {
+    margin: 20px 20px 0 20px;
+    color: #555;
+    cursor: pointer;
+    i {
+      font-size: 20px;
+      margin-top: -3px;
+      margin-right: 5px;
+    }
+    span {
+      color: #555;
+    }
+  }
+  .detailContainer {
+    padding: 20px;
+    & > .detailItem {
+      margin-top: 30px;
+      cursor: pointer;
+      &:first-child {
+        margin-top: 0;
+      }
+      a {
+        display: flex;
+        box-sizing: border-box;
+        height: 120px;
+        text-decoration: none;
+        color: currentColor;
+        & > .detailItemIcon {
+          overflow: hidden;
+          width: 150px;
+          height: 120px;
+          img {
+            width: 100%;
+          }
+        }
+        & > .detailItemInfo {
+          flex: 1;
+          margin-left: 10px;
+          h2 {
+            margin: 0;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            font-size: 16px;
+          }
+          p {
+            margin: 0;
+            margin-top: 5px;
+            overflow : hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            color: #9e9e9e;
+            font-size: 14px;
+            &.detailAuthor {
+              -webkit-line-clamp: 1;
+              color: #ccc;
+            }
+          }
+        }
+      }
+    }
+    &:empty {
+      &::after {
+        position: absolute;
+        content: '还没有任何内容';
+        width: 100%;
+        line-height: 50px;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.6);
+      }
+    }
+  }
+  .detailLoading {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    &.show {
+      display: block;
+    }
+    i {
+      position: fixed;
+      top: 50%;
+      right: 35%;
+      transform: translate3d(-50%, -50%, 0);
+      font-size: 50px;
+      color: #000;
+      animation: rotate 1.5s infinite linear;
+    }
+  }
 }
 
 #add {
-  // display: none;
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -145,7 +259,6 @@ body {
   &.show {
     display: block;
   }
-
   .backBtn {
     display: inline-block;
     margin: 20px 20px 0 20px;
@@ -272,6 +385,26 @@ body {
           background: #41aaeb;
         }
       }
+    }
+  }
+  .addlLoading {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    &.show {
+      display: block;
+    }
+    i {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      font-size: 50px;
+      color: #000;
+      animation: rotate 1.5s infinite linear;
     }
   }
 }
