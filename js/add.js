@@ -28,7 +28,7 @@ module.exports = {
       }
     } else if (params.type === 'API') {
       const arr = data[params.newsItem]
-      const reg = /\{(\w+)\}/g
+      const reg = /\{(.+)\}/g
       const firstMatch = params.newsHref.match(reg)[0]
       const matchParam = firstMatch.substring(1, firstMatch.length - 1)
       if (arr && arr.length > 0 && arr[0][params.newsTitle] && arr[0][matchParam]) {

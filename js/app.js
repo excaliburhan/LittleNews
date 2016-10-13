@@ -12,6 +12,7 @@ const $ = require('jquery')
 const cheerio = require('cheerio')
 const store = require('./js/store.js')
 const add = require('./js/add.js')
+const manage = require('./js/manage.js')
 let ajaxing = false
 let pageNum = 1
 
@@ -22,10 +23,14 @@ function loadDetail(id, page) {
   if (!page || !theSub.page) {
     url = theSub.url
   } else {
-    const query = theSub.page.replace(/\{\w+\}/, page)
+    const query = theSub.page.replace(/\{.+\}/, page)
     url = theSub.url + query
   }
-  if (ajaxing || (!theSub.page && page)) return // ajaxing or no page setting
+  if (ajaxing || (!theSub.page && page)) {
+    return
+  } else if (!page) {
+    $('.detailContainer').html('')
+  }
   $.ajax({
     url,
     beforeSend: () => {
@@ -44,18 +49,32 @@ function loadDetail(id, page) {
         try {
           const items = $c(theSub.newsItem)
           const titles = items.find(theSub.newsTitle)
-          const hrefs = items.find(theSub.newsHref)
           const imgs = items.find(theSub.newsImg)
           const contents = items.find(theSub.newsContent)
           const authors = items.find(theSub.newsAuthor)
+          let hrefs = []
           let tpl = ''
+          if (theSub.newsHref.indexOf('{') === -1) {
+            hrefs = items.find(theSub.newsHref)
+          } else {
+            const hrefArr = theSub.newsHref.match(/\{(.+)\}/g)
+            hrefArr.forEach((item) => {
+              const param = item.substring(1, item.length - 1)
+              hrefs = items.find(param)
+            })
+          }
           for (let i = 0; i < items.length; i++) {
-            const title = $c(titles[i]).text()
-            const href = $c(hrefs[i]).attr('href')
+            const title = $c(titles[i]).text().replace(/<\/?[^>]*>/g, '').trim()
             const img = $c(imgs[i]).attr('src')
-            const content = $c(contents[i]).text()
-            const author = $c(authors[i]).text() ? `By ${$c(authors[i]).text()}` : ''
+            const content = $c(contents[i]).text().replace(/<\/?[^>]*>/g, '').trim()
+            const author = $c(authors[i]).text().replace(/<\/?[^>]*>/g, '').trim()
             const authorDesc = author ? `By ${author}` : ''
+            let href
+            if (theSub.newsHref.indexOf('{') === -1) {
+              href = $c(hrefs[i]).attr('href')
+            } else {
+              href = theSub.newsHref.replace(/\{.+\}/, $c(hrefs[i]).attr('href'))
+            }
             tpl +=
               `<div class="detailItem data-id="${i}">` +
                 `<a href="${href}">` +
@@ -64,7 +83,7 @@ function loadDetail(id, page) {
                   '</div>' +
                   '<div class="detailItemInfo">' +
                     `<h2>${title}</h2>` +
-                    `<p>${content || 'There is no content'}</p>` +
+                    `<p>${content || 'There is no description'}</p>` +
                     `<p class='detailAuthor'>${authorDesc}</p>` +
                   '</div>' +
                 '</a>' +
@@ -89,10 +108,10 @@ function loadDetail(id, page) {
           const author = items[i][theSub.newsAuthor]
           const authorDesc = author ? `By ${author}` : ''
           let href = theSub.newsHref
-          const hrefArr = href.match(/\{(\w+)\}/g)
+          const hrefArr = href.match(/\{(.+)\}/g)
           hrefArr.forEach((item) => {
             const param = item.substring(1, item.length - 1)
-            href = href.replace(/\{\w+\}/, items[i][param])
+            href = href.replace(/\{.+\}/, items[i][param])
           })
           tpl +=
             `<div class="detailItem data-id="${i}">` +
@@ -102,7 +121,7 @@ function loadDetail(id, page) {
                 '</div>' +
                 '<div class="detailItemInfo">' +
                   `<h2>${title}</h2>` +
-                  `<p>${content || 'There is no content'}</p>` +
+                  `<p>${content || 'There is no description'}</p>` +
                   `<p class='detailAuthor'>${authorDesc}</p>` +
                 '</div>' +
               '</a>' +
@@ -171,27 +190,43 @@ function init() {
   })
 
   // page home
-  $('.addBtn').on('click', () => {
-    $('#add').addClass('show')
-  })
-  $('.manageBtn').on('click', () => {
-    $('#manage').addClass('show')
-  })
-  $('.backBtn').on('click', () => {
-    $('#add').removeClass('show')
-    $('#manage').removeClass('show')
-    loadList()
-  })
-  $('.listItem').on('click', (e) => {
-    const tag = e.currentTarget
-    const id = $(tag).attr('data-id')
-    $('.listItem.selected').removeClass('selected')
-    $(tag).addClass('selected')
-    loadDetail(id)
-  })
-  $('.detailLastTime').on('click', () => {
-    const id = $('.listItem.selected').attr('data-id')
-    loadDetail(id)
+  $('body').on('click', (e) => {
+    const tag = $(e.target)
+    if (tag.closest('.addBtn').length) {
+      $('#add').addClass('show')
+    } else if (tag.closest('.manageBtn').length) {
+      $('#manage').addClass('show')
+      manage.loadList()
+    } else if (tag.closest('.backBtn').length) {
+      $('#add').removeClass('show')
+      $('#manage').removeClass('show')
+      loadList()
+    } else if (tag.closest('.listItem').length) {
+      const theTag = tag.closest('.listItem')
+      const id = $(theTag).attr('data-id')
+      $('.listItem.selected').removeClass('selected')
+      $(theTag).addClass('selected')
+      loadDetail(id)
+    } else if (tag.closest('.detailLastTime').length) {
+      const id = $('.listItem.selected').attr('data-id')
+      loadDetail(id)
+    } else if (tag.closest('.manageItemSwitch').length) {
+      const theTag = tag.closest('.manageItemSwitch')
+      const id = $(theTag).parent().attr('data-id')
+      if ($(theTag).hasClass('off')) {
+        manage.toggleNews(id, 'on')
+        $(theTag).html('<i class="iconfont">&#xe606;</i><span>Close</span>').removeClass('off')
+      } else {
+        manage.toggleNews(id, 'off')
+        $(theTag).html('<i class="iconfont">&#xe606;</i><span>Open</span>').addClass('off')
+      }
+    } else if (tag.closest('.manageItemDel').length) {
+      const theTag = tag.closest('.manageItemDel')
+      const id = $(theTag).parent().attr('data-id')
+      console.log(id)
+      $(theTag).closest('.manageItem').remove()
+      manage.deleteNews(id)
+    }
   })
   $('.detailContainer').on('scroll', (e) => {
     if (ajaxing) {
