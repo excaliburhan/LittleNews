@@ -8,15 +8,19 @@
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
 const shell = electron.shell
+const fs = require('fs')
 const $ = require('jquery')
 const cheerio = require('cheerio')
 const menu = require('./js/menu.js')
 const store = require('./js/store.js')
 const add = require('./js/add.js')
 const manage = require('./js/manage.js')
-let ajaxing = false
-let pageNum = 1
-let isModified = false
+let ajaxing = false // ajax status
+let pageNum = 1 // current page
+let isModified = false // if modified from add/manage should loadSubs
+let dragDom = null // the drag dom
+let dropDom = null // the drop dom
+let editId = null // the id of news settings
 
 function loadDetail(id, page) {
   const subObj = store.get('subObj')
@@ -29,7 +33,6 @@ function loadDetail(id, page) {
     url = theSub.url + query
   }
   if (ajaxing || (!theSub.page && page)) {
-    console.log(ajaxing)
     return
   } else if (!page) {
     $('.detailContainer').html('')
@@ -98,8 +101,8 @@ function loadDetail(id, page) {
           } else {
             container.append(tpl)
           }
-        } catch (ex) {
-          // console.log(ex)
+        } catch (err) {
+          // console.log(err)
         }
       } else if (theSub.type === 'RSS') {
         const channel = $(data).find('channel')
@@ -175,53 +178,145 @@ function loadDetail(id, page) {
     })
 }
 
-function loadList() {
+function loadSubs() {
   const subIds = store.get('subIds')
   const subObj = store.get('subObj')
   let tpl = ''
   let firstId = null
-  if (subIds.length > 0) {
-    subIds.forEach((id, idx) => {
-      if (subObj[id]) {
-        const theSub = subObj[id]
-        const type = theSub.type
-        const name = theSub.name
-        const digest = theSub.digest
-        const icon = theSub.icon
-        tpl +=
-          `<div class="listItem ${idx === 0 ? 'selected' : ''}" data-id="${id}">` +
-            '<div class="listItemIcon">' +
-              `<img src="${icon || 'img/icon.png'}" alt="" />` +
-            '</div>' +
-            '<div class="listItemInfo">' +
-              `<h2>${name}[${type}]</h2>` +
-              `<p>${digest}</p>` +
-            '</div>' +
-          '</div>'
-        idx === 0 && (firstId = id)
-      }
-    })
-    $('.listContainer').html(tpl)
-    firstId && loadDetail(firstId)
+  if (subIds && subIds.length > 0) {
+    try {
+      subIds.forEach((id, idx) => {
+        if (subObj[id]) {
+          const theSub = subObj[id]
+          const type = theSub.type
+          const name = theSub.name
+          const digest = theSub.digest
+          const icon = theSub.icon
+          tpl +=
+            `<div class="listItem ${idx === 0 ? 'selected' : ''}" data-id="${id}"` +
+            'draggable="true">' +
+              '<div class="listItemIcon">' +
+                `<img src="${icon || 'img/icon.png'}" alt="" />` +
+              '</div>' +
+              '<div class="listItemInfo">' +
+                `<h2>${name}[${type}]</h2>` +
+                `<p>${digest}</p>` +
+              '</div>' +
+            '</div>'
+          idx === 0 && (firstId = id)
+        }
+      })
+      $('.listContainer').html(tpl)
+      firstId && loadDetail(firstId)
+    } catch (ex) { // if config json has error, clear localStorage
+      ipcRenderer.send('msg', 'There is an error in config file')
+      store.clear()
+    }
   }
+
   isModified = false
 }
 
 function init() {
-  ipcRenderer.send('dev')
-  ipcRenderer.on('devReply', (e, arg) => {
+  // ipcRenderer
+  ipcRenderer.on('openFileReply', (e, arg) => { // openFile
     // console.log(e)
-    if (!arg.slice(2).length) {
-      menu.initMenu()
-    }
+    const filename = arg[0]
+    fs.readFile(filename, 'utf8', (err, data) => {
+      if (err) {
+        console.log(err)
+      }
+      const obj = JSON.parse(data)
+      store.set('allIds', obj.allIds)
+      store.set('subIds', obj.subIds)
+      delete obj.allIds
+      delete obj.subIds
+      store.set('subObj', obj)
+      $('#add').removeClass('show')
+      $('#manage').removeClass('show')
+      loadSubs() // reloadSubs
+    })
   })
+  ipcRenderer.on('saveFileReply', (e, arg) => { // openFile
+    // console.log(e)
+    const filename = arg
+    const subObj = store.get('subObj')
+    const allIds = store.get('allIds')
+    const subIds = store.get('subIds')
+    const data = Object.assign({}, subObj, {
+      allIds,
+      subIds,
+    })
+    const writeData = JSON.stringify(data)
+    fs.writeFile(filename, writeData, (err) => {
+      if (err) {
+        // console.log(err)
+      }
+      ipcRenderer.send('msg', 'Export success')
+    })
+  })
+
+  // init menu
+  menu.initMenu()
+
   // load
-  loadList()
+  loadSubs()
 
   // native event
-  $('html').on('drop dragover', (e) => { // prevent drag event
+  $('html').bind('dragstart', (e) => {
+    // dragDom = $(e.currentTarget).find('.manageItem')
+    if ($(e.target).hasClass('listItem') || $(e.target).hasClass('manageItem')) {
+      dragDom = $(e.target)
+    } else if ($(e.target).closest('.listItem').length) {
+      dragDom = $(e.target).closest('.listItem')
+    } else if ($(e.target).closest('.manageItem').length) {
+      dragDom = $(e.target).closest('.manageItem')
+    } else {
+      e.preventDefault()
+      return
+    }
+  })
+  $('html').bind('dragover', (e) => {
     e.preventDefault()
     return
+  })
+  $('html').bind('drop', (e) => {
+    e.preventDefault()
+    let selector
+    if (dragDom.hasClass('listItem')) {
+      selector = '.listItem'
+    } else if (dragDom.hasClass('manageItem')) {
+      selector = '.manageItem'
+    }
+    if ($(e.target).hasClass('listItem') || $(e.target).hasClass('manageItem')) {
+      dropDom = $(e.target)
+    } else if ($(e.target).closest('.listItem').length) {
+      dropDom = $(e.target).closest('.listItem')
+    } else if ($(e.target).closest('.manageItem').length) {
+      dropDom = $(e.target).closest('.manageItem')
+    }
+    const allIds = store.get('allIds')
+    const subIds = store.get('subIds')
+    const startIndex = dragDom.index()
+    const endIndex = dropDom.index()
+    if (startIndex > endIndex) { // 3 -> 1
+      $(selector).eq(startIndex).insertBefore($(selector).eq(endIndex))
+    } else if (startIndex < endIndex) { // 1 - > 3
+      $(selector).eq(startIndex).insertAfter($(selector).eq(endIndex))
+    }
+    if (startIndex !== endIndex) {
+      if (selector === '.listItem') {
+        const allStartIndex = allIds.indexOf(subIds[startIndex])
+        const allEndIndex = allIds.indexOf(subIds[endIndex])
+        store.move('subIds', startIndex, endIndex)
+        store.move('allIds', allStartIndex, allEndIndex)
+      } else if (selector === '.manageItem') {
+        store.move('allIds', startIndex, endIndex)
+        const newSubIds = store.get('allIds').filter(v => subIds.includes(v))
+        store.set('subIds', newSubIds)
+        isModified = true // change order should trigger loadSubs
+      }
+    }
   })
   $('html').on('click', 'a', (e) => {
     const tag = e.currentTarget
@@ -229,7 +324,7 @@ function init() {
     shell.openExternal($(tag).attr('href'))
   })
 
-  // page home
+  // page event
   $('body').on('click', (e) => {
     const tag = $(e.target)
     if (tag.closest('.addBtn').length) {
@@ -238,9 +333,10 @@ function init() {
       $('#manage').addClass('show')
       manage.loadList()
     } else if (tag.closest('.backBtn').length) {
+      editId = null
       $('#add').removeClass('show')
       $('#manage').removeClass('show')
-      isModified && loadList()
+      isModified && loadSubs()
     } else if (tag.closest('.listItem').length) {
       const theTag = tag.closest('.listItem')
       const id = $(theTag).attr('data-id')
@@ -267,6 +363,13 @@ function init() {
       $(theTag).closest('.manageItem').remove()
       manage.deleteNews(id)
       isModified = true
+    } else if (tag.closest('.manageItem').length) {
+      const theTag = tag.closest('.manageItem')
+      const id = $(theTag).attr('data-id')
+      editId = id
+      $('#manage').removeClass('show')
+      $('#add').addClass('show')
+      add.loadSettings(id)
     }
   })
   $('.detailContainer').on('scroll', (e) => {
@@ -285,7 +388,7 @@ function init() {
     }
   })
 
-  // page add
+  // add/manage event
   $('.submitTestBtn').on('click', () => {
     const params = {
       type: $('.addType:checked').val(),
@@ -350,6 +453,7 @@ function init() {
       newsHref: $('.addNewsHref').val(),
       newsImg: $('.addNewsImg').val(),
       newsContent: $('.addNewsContent').val(),
+      newsAuthor: $('.addNewsAuthor').val(),
     }
     const arr = [
       params.type,
@@ -371,7 +475,8 @@ function init() {
       })
         .done((data) => {
           $('.addLoading').removeClass('show')
-          add.doSubmit(params, data)
+          add.doSubmit(params, data, editId)
+          add.clearSettings()
           ajaxing = false
           isModified = true
           ipcRenderer.send('msg', 'Success')

@@ -34,4 +34,15 @@ module.exports = {
       this.remove(key)
     }
   },
+  move(key, from, to) { // for Array
+    const obj = this.get(key)
+    if (obj instanceof Array) {
+      const tmp = obj[from]
+      if (from !== to) {
+        obj.splice(from, 1)
+        obj.splice(to, 0, tmp)
+      }
+    }
+    this.set(key, obj)
+  },
 }

@@ -38,6 +38,10 @@ body {
   color: @Black;
 }
 
+.noUserSelect {
+  -webkit-user-select: none;
+}
+
 #body {
   display: flex;
   height: 100%;
@@ -460,6 +464,7 @@ body {
       margin-top: 5px;
       list-style: none;
       background: @ExtraLightSilver;
+      cursor: pointer;
       &:nth-child(2n) {
         background: @LightSilver;
       }

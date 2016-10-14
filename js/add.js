@@ -23,8 +23,8 @@ module.exports = {
         if (item > 0 && title && href) {
           return true
         }
-      } catch (ex) {
-        // console.log(ex)
+      } catch (err) {
+        // console.log(err)
         return false
       }
     } else if (params.type === 'RSS') {
@@ -45,7 +45,46 @@ module.exports = {
     }
     return false
   },
-  doSubmit(params, data) {
+  loadSettings(id) {
+    const subObj = store.get('subObj')
+    const theSub = subObj[id]
+    if (!theSub) return
+    if (theSub.type !== 'RSS') {
+      $(`.addType[value=${theSub.type}]`).click()
+    }
+    $('.addName').val(theSub.name)
+    $('.addDigest').val(theSub.digest)
+    $('.addUrl').val(theSub.url)
+    $('.addPage').val(theSub.page)
+    $('.addIcon').val(theSub.icon)
+    $('.addNewsItem').val(theSub.newsItem)
+    $('.addNewsTitle').val(theSub.newsTitle)
+    $('.addNewsHref').val(theSub.newsHref)
+    $('.addNewsImg').val(theSub.newsImg)
+    $('.addNewsContent').val(theSub.newsContent)
+    $('.addNewsAuthor').val(theSub.newsAuthor)
+  },
+  clearSettings() {
+    $('.addType').eq(0).click()
+    $('.addName').val('')
+    $('.addDigest').val('')
+    $('.addUrl').val('')
+    $('.addPage').val('')
+    $('.addIcon').val('')
+    $('.addNewsItem').val('')
+    $('.addNewsTitle').val('')
+    $('.addNewsHref').val('')
+    $('.addNewsImg').val('')
+    $('.addNewsContent').val('')
+    $('.addNewsAuthor').val('')
+  },
+  doSubmit(params, data, editId) {
+    if (editId) {
+      const subObj = store.get('subObj') || {}
+      subObj[editId] = params
+      store.set('subObj', subObj)
+      return
+    }
     const id = Math.random().toString(36).substr(2, 10)
     const allIds = store.get('allIds') || []
     const subIds = store.get('subIds') || []

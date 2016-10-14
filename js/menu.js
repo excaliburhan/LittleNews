@@ -8,86 +8,105 @@
 const electron = require('electron')
 const remote = electron.remote
 const shell = electron.shell
+const ipcRenderer = electron.ipcRenderer
+
+let template = []
 let fullScreenKey
-// let toggleDevKey
+let toggleDevKey
+
 if (process.platform === 'darwin') {
   fullScreenKey = 'Ctrl+Command+F'
 } else {
   fullScreenKey = 'F11'
 }
-// if (process.platform === 'darwin') {
-//   toggleDevKey = 'Alt+Command+I'
-// } else {
-//   toggleDevKey = 'Ctrl+Shift+I'
-// }
+if (process.platform === 'darwin') {
+  toggleDevKey = 'Alt+Command+I'
+} else {
+  toggleDevKey = 'Ctrl+Shift+I'
+}
+
+ipcRenderer.on('devReply', (e, arg) => {
+  // console.log(e)
+  if (arg.slice(2).length) {
+    template.push({
+      label: 'View',
+      submenu: [
+        {
+          label: 'Reload',
+          accelerator: 'CmdOrCtrl+R',
+          click: (item, focusedWindow) => {
+            if (focusedWindow) focusedWindow.reload()
+          },
+        },
+        {
+          label: 'Toggle Developer Tools',
+          accelerator: toggleDevKey,
+          click: (item, focusedWindow) => {
+            if (focusedWindow) focusedWindow.toggleDevTools()
+          },
+        },
+      ],
+    })
+  }
+  const Menu = remote.Menu
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+})
 
 module.exports = {
   initMenu() {
-    const template = [
-      // {
-      //   label: 'Edit',
-      //   submenu: [
-      //     {
-      //       label: 'Undo',
-      //       accelerator: 'CmdOrCtrl+Z',
-      //       role: 'undo',
-      //     },
-      //     {
-      //       label: 'Redo',
-      //       accelerator: 'Shift+CmdOrCtrl+Z',
-      //       role: 'redo',
-      //     },
-      //     {
-      //       type: 'separator',
-      //     },
-      //     {
-      //       label: 'Cut',
-      //       accelerator: 'CmdOrCtrl+X',
-      //       role: 'cut',
-      //     },
-      //     {
-      //       label: 'Copy',
-      //       accelerator: 'CmdOrCtrl+C',
-      //       role: 'copy',
-      //     },
-      //     {
-      //       label: 'Paste',
-      //       accelerator: 'CmdOrCtrl+V',
-      //       role: 'paste',
-      //     },
-      //     {
-      //       label: 'Select All',
-      //       accelerator: 'CmdOrCtrl+A',
-      //       role: 'selectall',
-      //     },
-      //   ],
-      // },
-      // {
-      //   label: 'View',
-      //   submenu: [
-      //     {
-      //       label: 'Reload',
-      //       accelerator: 'CmdOrCtrl+R',
-      //       click: (item, focusedWindow) => {
-      //         if (focusedWindow) focusedWindow.reload()
-      //       },
-      //     },
-      //     {
-      //       label: 'Toggle Full Screen',
-      //       accelerator: fullScreenKey,
-      //       click: (item, focusedWindow) => {
-      //         if (focusedWindow) focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
-      //       },
-      //     },
-      //     {
-      //       label: 'Toggle Developer Tools',
-      //       accelerator: toggleDevKey,
-      //       click: (item, focusedWindow) => {
-      //         if (focusedWindow) focusedWindow.toggleDevTools()
-      //       },
-      //     },
-      //   ],
-      // },
+    template = [
+      {
+        label: 'Edit',
+        submenu: [
+          {
+            label: 'Import Config File',
+            accelerator: 'CmdOrCtrl+I',
+            click: () => {
+              ipcRenderer.send('openFile')
+            },
+          },
+          {
+            label: 'Export Config File',
+            accelerator: 'CmdOrCtrl+E',
+            click: () => {
+              ipcRenderer.send('saveFile')
+            },
+          },
+          { type: 'separator' },
+          {
+            label: 'Undo',
+            accelerator: 'CmdOrCtrl+Z',
+            role: 'undo',
+          },
+          {
+            label: 'Redo',
+            accelerator: 'Shift+CmdOrCtrl+Z',
+            role: 'redo',
+          },
+          { type: 'separator' },
+          {
+            label: 'Cut',
+            accelerator: 'CmdOrCtrl+X',
+            role: 'cut',
+          },
+          {
+            label: 'Copy',
+            accelerator: 'CmdOrCtrl+C',
+            role: 'copy',
+          },
+          {
+            label: 'Paste',
+            accelerator: 'CmdOrCtrl+V',
+            role: 'paste',
+          },
+          {
+            label: 'Select All',
+            accelerator: 'CmdOrCtrl+A',
+            role: 'selectall',
+          },
+        ],
+      },
       {
         label: 'Window',
         role: 'window',
@@ -96,13 +115,6 @@ module.exports = {
             label: 'Close',
             accelerator: 'CmdOrCtrl+W',
             role: 'close',
-          },
-          {
-            label: 'Reload',
-            accelerator: 'CmdOrCtrl+R',
-            click: (item, focusedWindow) => {
-              if (focusedWindow) focusedWindow.reload()
-            },
           },
           {
             label: 'Minimize',
@@ -116,9 +128,7 @@ module.exports = {
               if (focusedWindow) focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
             },
           },
-          {
-            type: 'separator',
-          },
+          { type: 'separator' },
           {
             label: 'Bring All to Front',
             role: 'front',
@@ -149,17 +159,13 @@ module.exports = {
             label: `About ${name}`,
             role: 'about',
           },
-          {
-            type: 'separator',
-          },
+          { type: 'separator' },
           {
             label: 'Services',
             role: 'services',
             submenu: [],
           },
-          {
-            type: 'separator',
-          },
+          { type: 'separator' },
           {
             label: `Hide ${name}`,
             accelerator: 'Command+H',
@@ -174,9 +180,7 @@ module.exports = {
             label: 'Show All',
             role: 'unhide',
           },
-          {
-            type: 'separator',
-          },
+          { type: 'separator' },
           {
             label: 'Quit',
             accelerator: 'Command+Q',
@@ -188,8 +192,6 @@ module.exports = {
       })
     }
 
-    const Menu = remote.Menu
-    const menu = Menu.buildFromTemplate(template)
-    Menu.setApplicationMenu(menu)
+    ipcRenderer.send('dev')
   },
 }

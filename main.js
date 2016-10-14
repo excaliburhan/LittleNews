@@ -43,10 +43,24 @@ app.on('activate', () => {
 
 // ipc
 ipcMain.on('dev', (e) => {
-  // console.log(e)
   e.sender.send('devReply', process.argv)
 })
 ipcMain.on('msg', (e, arg) => {
   // console.log(e)
   dialog.showErrorBox('Tips', arg)
+})
+ipcMain.on('openFile', (e) => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{ name: 'JSON file', extensions: ['json'] }],
+    properties: ['openFile'],
+  }, (filename) => {
+    e.sender.send('openFileReply', filename)
+  })
+})
+ipcMain.on('saveFile', (e) => {
+  dialog.showSaveDialog(mainWindow, {
+    filters: [{ name: 'JSON file', extensions: ['json'] }],
+  }, (filename) => {
+    e.sender.send('saveFileReply', filename)
+  })
 })

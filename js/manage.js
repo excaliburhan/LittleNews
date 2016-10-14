@@ -14,6 +14,9 @@ module.exports = {
     const subIds = store.get('subIds')
     const subObj = store.get('subObj')
 
+    if (!allIds || !subIds || !subObj) {
+      return
+    }
     let tpl = ''
     allIds.forEach((id) => {
       const isOff = !subIds.includes(id)
@@ -24,7 +27,7 @@ module.exports = {
         const digest = theSub.digest
         const icon = theSub.icon
         tpl +=
-          '<li class="manageItem">' +
+          `<li class="manageItem" data-id="${id}" draggable="true">` +
             '<div class="manageItemIcon">' +
               `<img src="${icon || 'img/icon.png'}" alt="" />` +
             '</div>' +
@@ -48,9 +51,11 @@ module.exports = {
     })
   },
   toggleNews(id, type) {
+    const allIds = store.get('allIds')
     let subIds = store.get('subIds')
     if (type === 'on') {
-      subIds.push(id)
+      const idx = allIds.indexOf(id)
+      subIds.splice(idx, 0, id)
     } else {
       subIds = subIds.filter(item => item !== id)
     }
