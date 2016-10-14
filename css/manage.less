@@ -1,0 +1,116 @@
+/**
+ *
+ * @author xiaoping (edwardhjp@gmail.com)
+ * @type css
+ * @add
+ *
+*/
+
+@import './var.less';
+
+#manage {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: @White;
+  overflow-y: scroll;
+  &.show {
+    display: block;
+  }
+  .backBtn {
+    display: inline-block;
+    margin: 20px 20px 0 20px;
+    padding: 0 15px 0 10px;
+    height: 40px;
+    line-height: 40px;
+    color: @White;
+    background: @Blue;
+    border-radius: 4px;
+    cursor: pointer;
+    &:hover {
+      background: @DarkBlue;
+    }
+  }
+  .manageForm {
+    color: @Black;
+    padding: 0;
+    margin: 20px 20px 0 20px;
+    & > li {
+      display: flex;
+      max-width: 500px;
+      margin-top: 5px;
+      list-style: none;
+      background: @ExtraLightSilver;
+      cursor: pointer;
+      &:nth-child(2n) {
+        background: @LightSilver;
+      }
+      & > .manageItemIcon {
+        overflow: hidden;
+        width: 80px;
+        height: 80px;
+        padding: 10px;
+        img {
+          width: 100%;
+        }
+      }
+      & > .manageItemInfo {
+        box-sizing: border-box;
+        width: 300px;
+        padding: 10px 10px 0 0;
+        h2 {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          margin: 0;
+          margin-bottom: 5px;
+          font-size: 20px;
+          color: @LightBlack;
+        }
+        p {
+          margin: 0;
+          overflow : hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          color: @DarkWhite;
+        }
+      }
+      & > .manageItemBtns {
+        width: 100px;
+        & > div {
+          display: inline-block;
+          width: 100%;
+          height: 50px;
+          line-height: 50px;
+          color: @White;
+          text-align: center;
+          background: @Yellow;
+          cursor: pointer;
+          &:hover {
+            background: @DarkYellow;
+          }
+          & > i {
+            margin-right: 3px;
+          }
+          &.off {
+            background: @Green;
+            &:hover {
+              background: @DarkGreen;
+            }
+          }
+          &.manageItemDel {
+            background: @Red;
+            &:hover {
+              background: @DarkRed;
+            }
+          }
+        }
+      }
+    }
+  }
+}

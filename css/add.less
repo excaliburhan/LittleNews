@@ -1,0 +1,171 @@
+/**
+ *
+ * @author xiaoping (edwardhjp@gmail.com)
+ * @type css
+ * @add
+ *
+*/
+
+@import './var.less';
+
+#add {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: @White;
+  overflow-y: scroll;
+  &.show {
+    display: block;
+  }
+  .backBtn {
+    display: inline-block;
+    margin: 20px 20px 0 20px;
+    padding: 0 15px 0 10px;
+    height: 40px;
+    line-height: 40px;
+    color: @White;
+    background: @Blue;
+    border-radius: 4px;
+    cursor: pointer;
+    &:hover {
+      background: @DarkBlue;
+    }
+  }
+  .addForm {
+    padding: 0;
+    margin: 20px 20px 0 20px;
+    & > li {
+      list-style: none;
+      margin-top: 15px;
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+    .addLine {
+      margin-top: 20px;
+      border-bottom: 1px solid @Gray;
+    }
+    .addItemLabel {
+      margin-bottom: 3px;
+    }
+    .addInputLabel {
+      & > input {
+        display: block;
+        padding: 3px 10px;
+        box-sizing: border-box;
+        width: 500px;
+        height: 36px;
+        color: #1f2d3d;
+        background-color: @White;
+        background-image: none;
+        border: 1px solid @Gray;
+        border-radius: 4px;
+        transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+        outline: none;
+        font-size: inherit;
+        &:hover {
+          border-color: @LightSilver;
+        }
+        &:focus {
+          border-color: @Blue;
+        }
+      }
+    }
+    .addRadioBtns {
+      display: flex;
+      & > label {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        &:not(:last-child) {
+          margin-right: -1px;
+        }
+        &:first-child span {
+          border-radius: 4px 0 0 4px;
+        }
+        &:last-child span {
+          border-radius: 0 4px 4px 0;
+        }
+        input {
+          opacity: 0;
+          outline: none;
+          position: absolute;
+          z-index: -1;
+          left: -999px;
+          &:checked + span {
+            z-index: 1;
+            color: @Blue;
+            border-color: @Blue;
+          }
+        }
+        span {
+          display: inline-block;
+          white-space: nowrap;
+          vertical-align: middle;
+          background: @White;
+          border: 1px solid @LightSilver;
+          color: @Black;
+          text-align: center;
+          box-sizing: border-box;
+          margin: 0;
+          position: relative;
+          cursor: pointer;
+          transition: border-color .2s cubic-bezier(.645,.045,.355,1),color .2s cubic-bezier(.645,.045,.355,1);
+          padding: 5px 15px;
+          font-size: 16px;
+          border-radius: 0;
+        }
+      }
+    }
+  }
+  .submitBtns {
+    overflow: hidden;
+    margin: 20px 20px 0 20px;
+    padding-bottom: 50px;
+    width: 200px;
+    & > div {
+      float: left;
+      width: 90px;
+      height: 40px;
+      line-height: 40px;
+      color: @White;
+      text-align: center;
+      background: @Green;
+      border-radius: 4px;
+      cursor: pointer;
+      &:hover {
+        background: @DarkGreen;
+      }
+      &.submitAddBtn {
+        margin-right: 20px;
+        background: @Blue;
+        &:hover {
+          background: @DarkBlue;
+        }
+      }
+    }
+  }
+  .addlLoading {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    &.show {
+      display: block;
+    }
+    i {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      font-size: 50px;
+      color: #000;
+      animation: rotate 1.5s infinite linear;
+    }
+  }
+}

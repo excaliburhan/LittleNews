@@ -49,8 +49,11 @@ module.exports = {
     const subObj = store.get('subObj')
     const theSub = subObj[id]
     if (!theSub) return
-    if (theSub.type !== 'RSS') {
+    if (theSub.type) {
       $(`.addType[value=${theSub.type}]`).click()
+    }
+    if (theSub.open) {
+      $(`.addOpen[value=${theSub.open}]`).click()
     }
     $('.addName').val(theSub.name)
     $('.addDigest').val(theSub.digest)
@@ -66,6 +69,7 @@ module.exports = {
   },
   clearSettings() {
     $('.addType').eq(0).click()
+    $('.addOpen').eq(0).click()
     $('.addName').val('')
     $('.addDigest').val('')
     $('.addUrl').val('')

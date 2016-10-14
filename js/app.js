@@ -320,8 +320,29 @@ function init() {
   })
   $('html').on('click', 'a', (e) => {
     const tag = e.currentTarget
+    const href = $(tag).attr('href')
+    const id = $('.listItem.selected').attr('data-id')
+    const openMethod = store.get('subObj')[id].open
     e.preventDefault()
-    shell.openExternal($(tag).attr('href'))
+    if (openMethod === 'APP') {
+      $('#webpage').attr('src', href)
+    } else {
+      shell.openExternal($(tag).attr('href'))
+    }
+  })
+  $('#webpage').bind('did-start-loading', (e) => {
+    const tag = $(e.target)
+    if (tag.attr('src') !== 'about:blank') {
+      $('.detailLoading').addClass('show')
+      $('#webpage').addClass('show')
+    }
+  })
+  $('#webpage').bind('dom-ready', (e) => {
+    const tag = $(e.target)
+    if (tag.attr('src') !== 'about:blank') {
+      $('.detailLoading').addClass('show')
+      $('#webpage').addClass('show')
+    }
   })
 
   // page event
@@ -338,6 +359,13 @@ function init() {
       $('#manage').removeClass('show')
       isModified && loadSubs()
     } else if (tag.closest('.listItem').length) {
+      try {
+        $('#webpage').removeClass('show').attr('src', 'about:blank')
+        // console.log($('#webpage').remove())
+        // $('#webpage')[0].destroyed()
+      } catch (err) {
+        console.log(err)
+      }
       const theTag = tag.closest('.listItem')
       const id = $(theTag).attr('data-id')
       $('.listItem.selected').removeClass('selected')
@@ -396,6 +424,7 @@ function init() {
       digest: $('.addDigest').val(),
       url: $('.addUrl').val(),
       icon: $('.addIcon').val(),
+      open: $('.addOpen:checked').val(),
       newsItem: $('.addNewsItem').val(),
       newsTitle: $('.addNewsTitle').val(),
       newsHref: $('.addNewsHref').val(),
@@ -448,6 +477,7 @@ function init() {
       url: $('.addUrl').val(),
       page: $('.addPage').val(),
       icon: $('.addIcon').val(),
+      open: $('.addOpen:checked').val(),
       newsItem: $('.addNewsItem').val(),
       newsTitle: $('.addNewsTitle').val(),
       newsHref: $('.addNewsHref').val(),
@@ -477,6 +507,8 @@ function init() {
           $('.addLoading').removeClass('show')
           add.doSubmit(params, data, editId)
           add.clearSettings()
+          $('#add').removeClass('show')
+          editId = null
           ajaxing = false
           isModified = true
           ipcRenderer.send('msg', 'Success')

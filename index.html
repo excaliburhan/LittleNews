@@ -95,6 +95,19 @@
             <input class="addIcon" type="text" placeholder="The src of news icon">
           </label>
         </li>
+        <li class="addItem addRadio">
+          <div class="addItemLabel">OpenNewsMethod</div>
+          <div class="addRadioBtns">
+            <label class="addRadioBtn">
+              <input class="addOpen" type="radio" name="open" value="APP" checked>
+              <span>APP</span>
+            </label>
+            <label class="addRadioBtn">
+              <input class="addOpen" type="radio" name="open" value="Browser">
+              <span>Browser</span>
+            </label>
+          </div>
+        </li>
         <div class="addLine"></div>
         <li class="addItem addInput">
           <div class="addItemLabel">Item(*, for Crawler use selector, eg ".item", for API use arrName, eg "list")</div>
@@ -147,6 +160,7 @@
         <i class="iconfont">&#xe605;</i>
       </div>
     </div>
+    <webview id="webpage" src='about:blank'></webview>
   </body>
   <script src="./js/app.js"></script>
   <script>
