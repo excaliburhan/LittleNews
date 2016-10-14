@@ -208,7 +208,13 @@ function loadList() {
 }
 
 function init() {
-  menu.initMenu()
+  ipcRenderer.send('dev')
+  ipcRenderer.on('devReply', (e, arg) => {
+    // console.log(e)
+    if (!arg.slice(2).length) {
+      menu.initMenu()
+    }
+  })
   // load
   loadList()
 

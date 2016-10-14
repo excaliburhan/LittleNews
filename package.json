@@ -4,7 +4,8 @@
   "description": "A news app via electron",
   "main": "main.js",
   "scripts": {
-    "start": "sh run.sh & gulp",
+    "start": "gulp & electron .",
+    "dev": "gulp & electron . --dev",
     "build:dev": "electron-packager ./ LittleNewsDev --platform=darwin --arch=x64 --icon=app.icns --overwrite --ignore=.*darwin-x64\\($\\|/\\)\\|Electron.app\\|.DS_Store",
     "build": "electron-packager ./ LittleNews --platform=darwin --arch=x64 --icon=app.icns --asar --overwrite --ignore=.*darwin-x64\\($\\|/\\)\\|Electron.app\\|.DS_Store"
   },
@@ -31,7 +32,8 @@
     "gulp-concat": "^2.6.0",
     "gulp-imagemin": "^3.0.3",
     "gulp-less": "^3.1.0",
-    "gulp-uglify": "^2.0.0"
+    "gulp-uglify": "^2.0.0",
+    "yargs": "^6.0.0"
   },
   "dependencies": {
     "cheerio": "^0.22.0",

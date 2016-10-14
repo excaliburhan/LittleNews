@@ -42,6 +42,10 @@ app.on('activate', () => {
 })
 
 // ipc
+ipcMain.on('dev', (e) => {
+  // console.log(e)
+  e.sender.send('devReply', process.argv)
+})
 ipcMain.on('msg', (e, arg) => {
   // console.log(e)
   dialog.showErrorBox('Tips', arg)
