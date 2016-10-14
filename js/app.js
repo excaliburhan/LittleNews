@@ -26,6 +26,7 @@ function loadDetail(id, page) {
   const subObj = store.get('subObj')
   const theSub = subObj[id]
   let url
+  if (!id) return // no id just quit
   if (!page || !theSub.page) {
     url = theSub.url
   } else {
@@ -207,11 +208,15 @@ function loadSubs() {
         }
       })
       $('.listContainer').html(tpl)
-      firstId && loadDetail(firstId)
+      loadDetail(firstId)
     } catch (ex) { // if config json has error, clear localStorage
       ipcRenderer.send('msg', 'There is an error in config file')
       store.clear()
     }
+  } else { // no subs
+    $('.listContainer').html('')
+    $('.detailLastTime').html('<i class="iconfont">&#xe604;</i><span>Last Sync Time: Never</span>')
+    $('.detailContainer').html('')
   }
 
   isModified = false
@@ -358,14 +363,14 @@ function init() {
       $('#add').removeClass('show')
       $('#manage').removeClass('show')
       isModified && loadSubs()
+    } else if (tag.closest('.clearBtn').length) {
+      store.clear()
+      editId = null
+      $('#add').removeClass('show')
+      $('#manage').removeClass('show')
+      loadSubs()
     } else if (tag.closest('.listItem').length) {
-      try {
-        $('#webpage').removeClass('show').attr('src', 'about:blank')
-        // console.log($('#webpage').remove())
-        // $('#webpage')[0].destroyed()
-      } catch (err) {
-        console.log(err)
-      }
+      $('#webpage').removeClass('show').attr('src', 'about:blank')
       const theTag = tag.closest('.listItem')
       const id = $(theTag).attr('data-id')
       $('.listItem.selected').removeClass('selected')

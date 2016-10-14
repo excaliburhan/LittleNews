@@ -20,7 +20,7 @@
   &.show {
     display: block;
   }
-  .backBtn {
+  .backBtn, .clearBtn {
     display: inline-block;
     margin: 20px 20px 0 20px;
     padding: 0 15px 0 10px;
@@ -32,6 +32,13 @@
     cursor: pointer;
     &:hover {
       background: @DarkBlue;
+    }
+  }
+  .clearBtn {
+    margin: 20px 20px 0 0;
+    background: @Red;
+    &:hover {
+      background: @DarkRed;
     }
   }
   .manageForm {
