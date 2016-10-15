@@ -22,6 +22,34 @@ let dragDom = null // the drag dom
 let dropDom = null // the drop dom
 let editId = null // the id of news settings
 
+function dealSelector(item, selector) {
+  if (selector.indexOf(':') === -1) {
+    return item.find(selector)
+  } else if (selector.indexOf(' ')) {
+    const arr = selector.split(' ')
+    arr.forEach((v) => {
+      if (v.indexOf(':') === -1) {
+        item = item.find(v)
+      } else {
+        const type = v.split(':')
+        const typeWord = type[1].substring(0, type[1].indexOf('('))
+        const typeInner = type[1].substring(type[1].indexOf('(') + 1, type[1].indexOf(')'))
+        item = item.find(type[0])[typeWord](typeInner)
+      }
+    })
+    return item
+  }
+  return item
+}
+function dealHref(item, pattern) {
+  const hrefArr = pattern.match(/\{(.+)\}/g)
+  hrefArr.forEach((v) => {
+    const param = v.substring(1, v.length - 1)
+    item = dealSelector(item, param)
+  })
+  return pattern.replace(/\{.+\}/, item.attr('href'))
+}
+
 function loadDetail(id, page) {
   const subObj = store.get('subObj')
   const theSub = subObj[id]
@@ -44,6 +72,7 @@ function loadDetail(id, page) {
       ajaxing = true
       $('.detailLoading').addClass('show')
     },
+    timeout: 5000,
   })
     .done((data) => {
       $('.detailLoading').removeClass('show')
@@ -53,34 +82,26 @@ function loadDetail(id, page) {
       $('.detailLastTime').html(timeTpl)
       if (theSub.type === 'Crawler') {
         const $c = cheerio.load(data)
-        try {
-          const items = $c(theSub.newsItem)
-          const titles = items.find(theSub.newsTitle)
-          const imgs = items.find(theSub.newsImg)
-          const contents = items.find(theSub.newsContent)
-          const authors = items.find(theSub.newsAuthor)
-          let hrefs = []
-          let tpl = ''
-          if (theSub.newsHref.indexOf('{') === -1) {
-            hrefs = items.find(theSub.newsHref)
-          } else {
-            const hrefArr = theSub.newsHref.match(/\{(.+)\}/g)
-            hrefArr.forEach((item) => {
-              const param = item.substring(1, item.length - 1)
-              hrefs = items.find(param)
-            })
-          }
-          for (let i = 0; i < items.length; i++) {
-            const title = $c(titles[i]).text().replace(/<\/?[^>]*>/g, '').trim()
-            const img = $c(imgs[i]).attr('src')
-            const content = $c(contents[i]).text().replace(/<\/?[^>]*>/g, '').trim()
-            const author = $c(authors[i]).text().replace(/<\/?[^>]*>/g, '').trim()
+        const items = $c(theSub.newsItem)
+        let tpl = ''
+        for (let i = 0; i < items.length; i++) {
+          try {
+            const item = items.eq(i)
+            dealSelector(item, theSub.newsTitle)
+            const title =
+              dealSelector(item, theSub.newsTitle).text().replace(/<\/?[^>]*>/g, '').trim()
+            const img =
+              dealSelector(item, theSub.newsImg).attr('src')
+            const content =
+              dealSelector(item, theSub.newsContent).text().replace(/<\/?[^>]*>/g, '').trim()
+            const author =
+              dealSelector(item, theSub.newsAuthor).text().replace(/<\/?[^>]*>/g, '').trim()
             const authorDesc = author ? `By ${author}` : ''
             let href
             if (theSub.newsHref.indexOf('{') === -1) {
-              href = $c(hrefs[i]).attr('href')
+              href = dealSelector(item, theSub.newsHref).attr('href')
             } else {
-              href = theSub.newsHref.replace(/\{.+\}/, $c(hrefs[i]).attr('href'))
+              href = dealHref(item, theSub.newsHref)
             }
             tpl +=
               `<div class="detailItem data-id="${i}">` +
@@ -95,6 +116,8 @@ function loadDetail(id, page) {
                   '</div>' +
                 '</a>' +
               '</div>'
+          } catch (err) {
+            console.log(err)
           }
           if (!page) {
             pageNum = 1
@@ -102,8 +125,6 @@ function loadDetail(id, page) {
           } else {
             container.append(tpl)
           }
-        } catch (err) {
-          // console.log(err)
         }
       } else if (theSub.type === 'RSS') {
         const channel = $(data).find('channel')
@@ -269,7 +290,6 @@ function init() {
 
   // native event
   $('html').bind('dragstart', (e) => {
-    // dragDom = $(e.currentTarget).find('.manageItem')
     if ($(e.target).hasClass('listItem') || $(e.target).hasClass('manageItem')) {
       dragDom = $(e.target)
     } else if ($(e.target).closest('.listItem').length) {
@@ -454,6 +474,7 @@ function init() {
           ajaxing = true
           $('.addLoading').addClass('show')
         },
+        timeout: 5000,
       })
         .done((data) => {
           $('.addLoading').removeClass('show')
@@ -507,6 +528,7 @@ function init() {
           ajaxing = true
           $('.addLoading').addClass('show')
         },
+        timeout: 5000,
       })
         .done((data) => {
           $('.addLoading').removeClass('show')

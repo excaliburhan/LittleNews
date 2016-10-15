@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "cheerio": "^0.22.0",
+    "cheerio-eq": "^1.0.1",
     "jquery": "^3.1.1"
   }
 }
