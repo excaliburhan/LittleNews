@@ -8,6 +8,7 @@
 const $ = require('jquery')
 const cheerio = require('cheerio')
 const store = require('./store.js')
+const util = require('./util.js')
 
 module.exports = {
   validate(arr) {
@@ -17,10 +18,16 @@ module.exports = {
     if (params.type === 'Crawler') {
       const $c = cheerio.load(data)
       try {
-        const item = $c(params.newsItem).length
-        const title = $c(params.newsItem).find(params.newsTitle).length
-        const href = $c(params.newsItem).find(params.newsHref).length
-        if (item > 0 && title && href) {
+        const items = $c(params.newsItem)
+        const item = items.eq(0)
+        const title = util.dealSelector(item, params.newsTitle)
+        let href
+        if (params.newsHref.indexOf('{') === -1) {
+          href = util.dealSelector(item, params.newsHref).attr('href')
+        } else {
+          href = util.dealHref(item, params.newsHref)
+        }
+        if (items.length > 0 && title && href) {
           return true
         }
       } catch (err) {

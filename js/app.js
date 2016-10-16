@@ -13,6 +13,7 @@ const $ = require('jquery')
 const cheerio = require('cheerio')
 const menu = require('./js/menu.js')
 const store = require('./js/store.js')
+const util = require('./js/util.js')
 const add = require('./js/add.js')
 const manage = require('./js/manage.js')
 let ajaxing = false // ajax status
@@ -21,34 +22,6 @@ let isModified = false // if modified from add/manage should loadSubs
 let dragDom = null // the drag dom
 let dropDom = null // the drop dom
 let editId = null // the id of news settings
-
-function dealSelector(item, selector) {
-  if (selector.indexOf(':') === -1) {
-    return item.find(selector)
-  } else if (selector.indexOf(' ')) {
-    const arr = selector.split(' ')
-    arr.forEach((v) => {
-      if (v.indexOf(':') === -1) {
-        item = item.find(v)
-      } else {
-        const type = v.split(':')
-        const typeWord = type[1].substring(0, type[1].indexOf('('))
-        const typeInner = type[1].substring(type[1].indexOf('(') + 1, type[1].indexOf(')'))
-        item = item.find(type[0])[typeWord](typeInner)
-      }
-    })
-    return item
-  }
-  return item
-}
-function dealHref(item, pattern) {
-  const hrefArr = pattern.match(/\{(.+)\}/g)
-  hrefArr.forEach((v) => {
-    const param = v.substring(1, v.length - 1)
-    item = dealSelector(item, param)
-  })
-  return pattern.replace(/\{.+\}/, item.attr('href'))
-}
 
 function loadDetail(id, page) {
   const subObj = store.get('subObj')
@@ -87,21 +60,21 @@ function loadDetail(id, page) {
         for (let i = 0; i < items.length; i++) {
           try {
             const item = items.eq(i)
-            dealSelector(item, theSub.newsTitle)
+            util.dealSelector(item, theSub.newsTitle)
             const title =
-              dealSelector(item, theSub.newsTitle).text().replace(/<\/?[^>]*>/g, '').trim()
+              util.dealSelector(item, theSub.newsTitle).text().replace(/<\/?[^>]*>/g, '').trim()
             const img =
-              dealSelector(item, theSub.newsImg).attr('src')
+              util.dealSelector(item, theSub.newsImg).attr('src')
             const content =
-              dealSelector(item, theSub.newsContent).text().replace(/<\/?[^>]*>/g, '').trim()
+              util.dealSelector(item, theSub.newsContent).text().replace(/<\/?[^>]*>/g, '').trim()
             const author =
-              dealSelector(item, theSub.newsAuthor).text().replace(/<\/?[^>]*>/g, '').trim()
+              util.dealSelector(item, theSub.newsAuthor).text().replace(/<\/?[^>]*>/g, '').trim()
             const authorDesc = author ? `By ${author}` : ''
             let href
             if (theSub.newsHref.indexOf('{') === -1) {
-              href = dealSelector(item, theSub.newsHref).attr('href')
+              href = util.dealSelector(item, theSub.newsHref).attr('href')
             } else {
-              href = dealHref(item, theSub.newsHref)
+              href = util.dealHref(item, theSub.newsHref)
             }
             tpl +=
               `<div class="detailItem data-id="${i}">` +
@@ -135,7 +108,11 @@ function loadDetail(id, page) {
           const href = $(items[i]).find('link').text()
           const content =
             $(items[i]).find('description').text().replace(/<\/?[^>]*>/g, '').substr(0, 200)
-          const authorDesc = ''
+          const author = $(items[i]).find('pubDate').text() || ''
+          let authorDesc = ''
+          if (author) {
+            authorDesc = `By ${new Date(author).toLocaleDateString()}` || ''
+          }
           tpl +=
             `<div class="detailItem data-id="${i}">` +
               `<a href="${href}">` +
@@ -534,10 +511,11 @@ function init() {
           $('.addLoading').removeClass('show')
           add.doSubmit(params, data, editId)
           add.clearSettings()
-          $('#add').removeClass('show')
           editId = null
           ajaxing = false
           isModified = true
+          loadSubs()
+          $('#add').removeClass('show')
           ipcRenderer.send('msg', 'Success')
         })
         .fail(() => {
