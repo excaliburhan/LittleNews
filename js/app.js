@@ -111,7 +111,7 @@ function loadDetail(id, page) {
           const author = $(items[i]).find('pubDate').text() || ''
           let authorDesc = ''
           if (author) {
-            authorDesc = `By ${new Date(author).toLocaleDateString()}` || ''
+            authorDesc = `By ${new Date(author).toLocaleString()}` || ''
           }
           tpl +=
             `<div class="detailItem data-id="${i}">` +
@@ -222,41 +222,41 @@ function loadSubs() {
 
 function init() {
   // ipcRenderer
-  ipcRenderer.on('openFileReply', (e, arg) => { // openFile
+  ipcRenderer.on('dialogReply', (e, arg) => {
     // console.log(e)
-    const filename = arg[0]
-    fs.readFile(filename, 'utf8', (err, data) => {
-      if (err) {
-        console.log(err)
-      }
-      const obj = JSON.parse(data)
-      store.set('allIds', obj.allIds)
-      store.set('subIds', obj.subIds)
-      delete obj.allIds
-      delete obj.subIds
-      store.set('subObj', obj)
-      $('#add').removeClass('show')
-      $('#manage').removeClass('show')
-      loadSubs() // reloadSubs
-    })
-  })
-  ipcRenderer.on('saveFileReply', (e, arg) => { // openFile
-    // console.log(e)
-    const filename = arg
-    const subObj = store.get('subObj')
-    const allIds = store.get('allIds')
-    const subIds = store.get('subIds')
-    const data = Object.assign({}, subObj, {
-      allIds,
-      subIds,
-    })
-    const writeData = JSON.stringify(data)
-    fs.writeFile(filename, writeData, (err) => {
-      if (err) {
-        // console.log(err)
-      }
-      ipcRenderer.send('msg', 'Export success')
-    })
+    const type = arg[0]
+    const filename = arg[1]
+    if (type === 'import') {
+      fs.readFile(filename, 'utf8', (err, data) => {
+        if (err) {
+          console.log(err)
+        }
+        const obj = JSON.parse(data)
+        store.set('allIds', obj.allIds)
+        store.set('subIds', obj.subIds)
+        delete obj.allIds
+        delete obj.subIds
+        store.set('subObj', obj)
+        $('#add').removeClass('show')
+        $('#manage').removeClass('show')
+        loadSubs() // reloadSubs
+      })
+    } else if (type === 'export') {
+      const subObj = store.get('subObj')
+      const allIds = store.get('allIds')
+      const subIds = store.get('subIds')
+      const data = Object.assign({}, subObj, {
+        allIds,
+        subIds,
+      })
+      const writeData = JSON.stringify(data)
+      fs.writeFile(filename, writeData, (err) => {
+        if (err) {
+          // console.log(err)
+        }
+        ipcRenderer.send('msg', 'Export success')
+      })
+    }
   })
 
   // init menu

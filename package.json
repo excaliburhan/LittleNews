@@ -1,6 +1,6 @@
 {
   "name": "LittleNews",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A news app via electron",
   "main": "main.js",
   "scripts": {

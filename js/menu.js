@@ -63,14 +63,14 @@ module.exports = {
             label: 'Import Config File',
             accelerator: 'CmdOrCtrl+I',
             click: () => {
-              ipcRenderer.send('openFile')
+              ipcRenderer.send('dialog', 'import')
             },
           },
           {
             label: 'Export Config File',
             accelerator: 'CmdOrCtrl+E',
             click: () => {
-              ipcRenderer.send('saveFile')
+              ipcRenderer.send('dialog', 'export')
             },
           },
           { type: 'separator' },
@@ -120,6 +120,19 @@ module.exports = {
             label: 'Minimize',
             accelerator: 'CmdOrCtrl+M',
             role: 'minimize',
+          },
+          {
+            label: 'Toggle Maximize',
+            accelerator: 'Shift+CmdOrCtrl+M',
+            click: (item, focusedWindow) => {
+              if (focusedWindow) {
+                if (focusedWindow.isMaximized()) {
+                  focusedWindow.unmaximize()
+                } else {
+                  focusedWindow.maximize()
+                }
+              }
+            },
           },
           {
             label: 'Toggle Full Screen',

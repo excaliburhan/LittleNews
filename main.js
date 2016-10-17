@@ -49,18 +49,31 @@ ipcMain.on('msg', (e, arg) => {
   // console.log(e)
   dialog.showErrorBox('Tips', arg)
 })
-ipcMain.on('openFile', (e) => {
-  dialog.showOpenDialog(mainWindow, {
-    filters: [{ name: 'JSON file', extensions: ['json'] }],
-    properties: ['openFile'],
-  }, (filename) => {
-    e.sender.send('openFileReply', filename)
-  })
+ipcMain.on('dialog', (e, arg) => {
+  if (arg === 'import') {
+    dialog.showOpenDialog(mainWindow, {
+      filters: [{
+        name: 'JSON file',
+        extensions: ['json'],
+      }],
+      properties: ['openFile'],
+    }, (filenames) => {
+      e.sender.send('dialogReply', ['import', filenames[0]])
+    })
+  } else if (arg === 'export') {
+    dialog.showSaveDialog(mainWindow, {
+      // defaultPath: 'default.json',
+      filters: [{
+        name: 'JSON file',
+        extensions: ['json'],
+      }],
+    }, (filename) => {
+      e.sender.send('dialogReply', ['export', filename])
+    })
+  }
 })
-ipcMain.on('saveFile', (e) => {
-  dialog.showSaveDialog(mainWindow, {
-    filters: [{ name: 'JSON file', extensions: ['json'] }],
-  }, (filename) => {
-    e.sender.send('saveFileReply', filename)
-  })
+ipcMain.on('BrowserWindow', (e, arg) => {
+  if (arg === 'maximize') {
+    mainWindow.maximize()
+  }
 })
