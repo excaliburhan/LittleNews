@@ -58,17 +58,16 @@ ipcMain.on('dialog', (e, arg) => {
       }],
       properties: ['openFile'],
     }, (filenames) => {
-      e.sender.send('dialogReply', ['import', filenames[0]])
+      filenames && e.sender.send('dialogReply', ['import', filenames[0]])
     })
   } else if (arg === 'export') {
     dialog.showSaveDialog(mainWindow, {
-      // defaultPath: 'default.json',
       filters: [{
         name: 'JSON file',
         extensions: ['json'],
       }],
     }, (filename) => {
-      e.sender.send('dialogReply', ['export', filename])
+      filename && e.sender.send('dialogReply', ['export', filename])
     })
   }
 })
