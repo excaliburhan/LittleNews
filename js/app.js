@@ -100,15 +100,31 @@ function loadDetail(id, page) {
           }
         }
       } else if (theSub.type === 'RSS') {
-        const channel = $(data).find('channel')
-        const items = channel.find('item')
+        const rssObj = {}
+        let channel
+        if ($(data).find('channel').length) { // RSS 2.0
+          rssObj.items = 'item'
+          rssObj.title = 'title'
+          rssObj.link = 'link'
+          rssObj.description = 'description'
+          rssObj.pubDate = 'pubDate'
+          channel = $(data).find('channel')
+        } else if ($(data).find('feed').length) { // atom
+          rssObj.items = 'entry'
+          rssObj.title = 'title'
+          rssObj.link = 'link'
+          rssObj.description = 'summary'
+          rssObj.pubDate = 'published'
+          channel = $(data).find('feed')
+        }
+        const items = channel.find(rssObj.items)
         let tpl = ''
         for (let i = 0; i < items.length; i++) {
-          const title = $(items[i]).find('title').text()
-          const href = $(items[i]).find('link').text()
+          const title = $(items[i]).find(rssObj.title).text()
+          const href = $(items[i]).find(rssObj.link).text()
           const content =
-            $(items[i]).find('description').text().replace(/<\/?[^>]*>/g, '').substr(0, 200)
-          const author = $(items[i]).find('pubDate').text() || ''
+            $(items[i]).find(rssObj.description).text().replace(/<\/?[^>]*>/g, '').substr(0, 200)
+          const author = $(items[i]).find(rssObj.pubDate).text() || ''
           let authorDesc = ''
           if (author) {
             authorDesc = `By ${new Date(author).toLocaleString()}` || ''

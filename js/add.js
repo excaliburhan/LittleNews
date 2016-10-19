@@ -35,8 +35,15 @@ module.exports = {
         return false
       }
     } else if (params.type === 'RSS') {
-      const channel = $(data).find('channel')
-      const items = channel.find('item')
+      let channel
+      let items
+      if ($(data).find('channel').length) { // RSS 2.0
+        channel = $(data).find('channel')
+        items = channel.find('item')
+      } else if ($(data).find('feed').length) { // atom
+        channel = $(data).find('feed')
+        items = channel.find('entry')
+      }
       if (items.length > 0) {
         return true
       }
@@ -106,9 +113,16 @@ module.exports = {
     newObj[id] = params
     subObj = Object.assign({}, subObj, newObj)
     if (params.type === 'RSS' && data) {
-      const channel = $(data).find('channel')
-      const name = channel.find('title').eq(0).text()
-      const digest = channel.find('description').eq(0).text()
+      let channel, name, digest
+      if ($(data).find('channel').length) { // RSS 2.0
+        channel = $(data).find('channel')
+        name = channel.find('title').eq(0).text()
+        digest = channel.find('description').eq(0).text()
+      } else if ($(data).find('feed').length) { // atom
+        channel = $(data).find('feed')
+        name = channel.find('title').eq(0).text()
+        digest = channel.find('subtitle').eq(0).text()
+      }
       newObj[id] = Object.assign({}, newObj[id], {
         name,
         digest,
