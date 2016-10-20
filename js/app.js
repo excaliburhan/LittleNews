@@ -367,8 +367,11 @@ function init() {
   $('body').on('click', (e) => {
     const tag = $(e.target)
     if (tag.closest('.addBtn').length) {
+      $('#webpage').removeClass('show').attr('src', 'about:blank')
+      $('.detailLoading').removeClass('show')
       $('#add').addClass('show')
     } else if (tag.closest('.manageBtn').length) {
+      $('#webpage').removeClass('show').attr('src', 'about:blank')
       $('#manage').addClass('show')
       manage.loadList()
     } else if (tag.closest('.backBtn').length) {
@@ -416,6 +419,16 @@ function init() {
       $('#manage').removeClass('show')
       $('#add').addClass('show')
       add.loadSettings(id)
+    }
+  })
+  $('body').on('keydown', (e) => {
+    const code = e.keyCode
+    if (code === 8 || code === 27) { // backspace / esc
+      editId = null
+      $('#add').removeClass('show')
+      $('#manage').removeClass('show')
+    } else if (code === 13 && $('#add').hasClass('show')) { // enter
+      $('.submitAddBtn').click()
     }
   })
   $('.detailContainer').on('scroll', (e) => {

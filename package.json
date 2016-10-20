@@ -1,13 +1,13 @@
 {
   "name": "LittleNews",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "A news app via electron",
   "main": "main.js",
   "scripts": {
     "start": "gulp & electron .",
     "dev": "gulp & electron . --dev",
-    "build:dev": "electron-packager ./ LittleNewsDev --platform=darwin --arch=x64 --icon=app.icns --overwrite --ignore=.*darwin-x64\\($\\|/\\)\\|Electron.app\\|.DS_Store",
-    "build": "electron-packager ./ LittleNews --platform=darwin --arch=x64 --icon=app.icns --asar --overwrite --ignore=.*darwin-x64\\($\\|/\\)\\|Electron.app\\|.DS_Store"
+    "build": "electron-packager ./ LittleNews --platform=darwin --arch=x64 --icon=app.icns --asar --overwrite --ignore=.*darwin-x64\\($\\|/\\)\\|Electron.app\\|.DS_Store",
+    "build:dev": "electron-packager ./ LittleNewsDev --platform=darwin --arch=x64 --icon=app.icns --overwrite --ignore=.*darwin-x64\\($\\|/\\)\\|Electron.app\\|.DS_Store"
   },
   "keywords": [
     "electron",
