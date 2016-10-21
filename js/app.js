@@ -11,6 +11,7 @@ const shell = electron.shell
 const fs = require('fs')
 const $ = require('jquery')
 const cheerio = require('cheerio')
+const feedFinder = require('feed-finder')
 const menu = require('./js/menu.js')
 const store = require('./js/store.js')
 const util = require('./js/util.js')
@@ -99,7 +100,7 @@ function loadDetail(id, page) {
             container.append(tpl)
           }
         }
-      } else if (theSub.type === 'RSS') {
+      } else if (theSub.type === 'FEED') {
         const rssObj = {}
         let channel
         if ($(data).find('channel').length) { // RSS 2.0
@@ -367,6 +368,9 @@ function init() {
   $('body').on('click', (e) => {
     const tag = $(e.target)
     if (tag.closest('.addBtn').length) {
+      if (!editId) {
+        add.clearSettings()
+      }
       $('#webpage').removeClass('show').attr('src', 'about:blank')
       $('.detailLoading').removeClass('show')
       $('#add').addClass('show')
@@ -451,31 +455,7 @@ function init() {
 
   // add/manage event
   $('.submitTestBtn').on('click', () => {
-    const params = {
-      type: $('.addType:checked').val(),
-      name: $('.addName').val(),
-      digest: $('.addDigest').val(),
-      url: $('.addUrl').val(),
-      icon: $('.addIcon').val(),
-      open: $('.addOpen:checked').val(),
-      newsItem: $('.addNewsItem').val(),
-      newsTitle: $('.addNewsTitle').val(),
-      newsHref: $('.addNewsHref').val(),
-      newsImg: $('.addNewsImg').val(),
-      newsContent: $('.addNewsContent').val(),
-      newsAuthor: $('.addNewsAuthor').val(),
-    }
-    const arr = [
-      params.type,
-      params.name,
-      params.digest,
-      params.url,
-      params.newsItem,
-      params.newsTitle,
-      params.newsHref,
-    ]
-    if (add.validate(arr) || params.type === 'RSS') { // rss dont need most params
-      if (ajaxing) return
+    function theTest(params) {
       $.ajax({
         url: params.url,
         beforeSend: () => {
@@ -498,18 +478,12 @@ function init() {
           ajaxing = false
           ipcRenderer.send('msg', 'Failed to load page')
         })
-    } else {
-      ajaxing = false
-      ipcRenderer.send('msg', 'You haven\'t fill all required params')
     }
-  })
-  $('.submitAddBtn').on('click', () => {
     const params = {
       type: $('.addType:checked').val(),
       name: $('.addName').val(),
       digest: $('.addDigest').val(),
       url: $('.addUrl').val(),
-      page: $('.addPage').val(),
       icon: $('.addIcon').val(),
       open: $('.addOpen:checked').val(),
       newsItem: $('.addNewsItem').val(),
@@ -528,8 +502,35 @@ function init() {
       params.newsTitle,
       params.newsHref,
     ]
-    if (add.validate(arr) || params.type === 'RSS') {
+    if (add.validate(arr) || params.type === 'FEED') { // rss dont need most params
       if (ajaxing) return
+      if (params.type === 'FEED') {
+        $('.addLoading').addClass('show')
+        feedFinder(params.url, (err, feedUrls) => {
+          if (err) {
+            console.log(err)
+            $('.addLoading').removeClass('show')
+            return
+          }
+          if (feedUrls.length > 0) {
+            params.url = feedUrls[0]
+            theTest(params)
+          } else {
+            $('.addLoading').removeClass('show')
+            ajaxing = false
+            ipcRenderer.send('msg', 'Error occurs, please check your settings')
+          }
+        })
+      } else {
+        theTest(params)
+      }
+    } else {
+      ajaxing = false
+      ipcRenderer.send('msg', 'Error occurs, please check your settings')
+    }
+  })
+  $('.submitAddBtn').on('click', () => {
+    function theSubmit(params) {
       $.ajax({
         url: params.url,
         beforeSend: () => {
@@ -554,8 +555,55 @@ function init() {
           ajaxing = false
           ipcRenderer.send('msg', 'Failed to load page')
         })
+    }
+    const params = {
+      type: $('.addType:checked').val(),
+      name: $('.addName').val(),
+      digest: $('.addDigest').val(),
+      url: $('.addUrl').val(),
+      page: $('.addPage').val(),
+      icon: $('.addIcon').val(),
+      open: $('.addOpen:checked').val(),
+      newsItem: $('.addNewsItem').val(),
+      newsTitle: $('.addNewsTitle').val(),
+      newsHref: $('.addNewsHref').val(),
+      newsImg: $('.addNewsImg').val(),
+      newsContent: $('.addNewsContent').val(),
+      newsAuthor: $('.addNewsAuthor').val(),
+    }
+    const arr = [
+      params.type,
+      params.name,
+      params.digest,
+      params.url,
+      params.newsItem,
+      params.newsTitle,
+      params.newsHref,
+    ]
+    if (add.validate(arr) || params.type === 'FEED') {
+      if (ajaxing) return
+      if (params.type === 'FEED') {
+        $('.addLoading').addClass('show')
+        feedFinder(params.url, (err, feedUrls) => {
+          if (err) {
+            console.log(err)
+            $('.addLoading').removeClass('show')
+            return
+          }
+          if (feedUrls.length > 0) {
+            params.url = feedUrls[0]
+            theSubmit(params)
+          } else {
+            $('.addLoading').removeClass('show')
+            ajaxing = false
+            ipcRenderer.send('msg', 'Error occurs, please check your settings')
+          }
+        })
+      } else {
+        theSubmit(params)
+      }
     } else {
-      ipcRenderer.send('msg', 'You haven\'t fill all required params')
+      ipcRenderer.send('msg', 'Error occurs, please check your settings')
     }
   })
 }

@@ -34,7 +34,7 @@ module.exports = {
         // console.log(err)
         return false
       }
-    } else if (params.type === 'RSS') {
+    } else if (params.type === 'FEED') {
       let channel
       let items
       if ($(data).find('channel').length) { // RSS 2.0
@@ -112,7 +112,7 @@ module.exports = {
     subIds.push(id)
     newObj[id] = params
     subObj = Object.assign({}, subObj, newObj)
-    if (params.type === 'RSS' && data) {
+    if (params.type === 'FEED' && data) {
       let channel, name, digest
       if ($(data).find('channel').length) { // RSS 2.0
         channel = $(data).find('channel')
