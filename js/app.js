@@ -468,7 +468,7 @@ function init() {
           $('.addLoading').removeClass('show')
           ajaxing = false
           if (add.doTest(data, params)) {
-            ipcRenderer.send('msg', 'Test passed')
+            params.type !== 'FEED' && ipcRenderer.send('msg', 'Test passed')
           } else {
             ipcRenderer.send('msg', 'You haven\'t pass the test, please check your settings')
           }
@@ -508,12 +508,14 @@ function init() {
         $('.addLoading').addClass('show')
         feedFinder(params.url, (err, feedUrls) => {
           if (err) {
-            console.log(err)
             $('.addLoading').removeClass('show')
+            ajaxing = false
+            ipcRenderer.send('msg', 'Feed finder has an error')
             return
           }
           if (feedUrls.length > 0) {
             params.url = feedUrls[0]
+            ipcRenderer.send('msg', `Find feedUrl: ${params.url}`)
             theTest(params)
           } else {
             $('.addLoading').removeClass('show')
@@ -586,8 +588,9 @@ function init() {
         $('.addLoading').addClass('show')
         feedFinder(params.url, (err, feedUrls) => {
           if (err) {
-            console.log(err)
             $('.addLoading').removeClass('show')
+            ajaxing = false
+            ipcRenderer.send('msg', 'Feed finder has an error')
             return
           }
           if (feedUrls.length > 0) {
