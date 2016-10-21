@@ -427,6 +427,8 @@ function init() {
       editId = null
       $('#add').removeClass('show')
       $('#manage').removeClass('show')
+      $('#webpage').removeClass('show').attr('src', 'about:blank')
+      $('.detailLoading').removeClass('show')
     } else if (code === 13 && $('#add').hasClass('show')) { // enter
       $('.submitAddBtn').click()
     }
