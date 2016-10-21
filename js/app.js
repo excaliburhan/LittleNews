@@ -423,7 +423,7 @@ function init() {
   })
   $('body').on('keydown', (e) => {
     const code = e.keyCode
-    if (code === 8 || code === 27) { // backspace / esc
+    if (code === 27) { // esc
       editId = null
       $('#add').removeClass('show')
       $('#manage').removeClass('show')
