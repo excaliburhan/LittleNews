@@ -46,7 +46,7 @@ function loadDetail(id, page) {
       ajaxing = true
       $('.detailLoading').addClass('show')
     },
-    timeout: 5000,
+    timeout: 10000,
   })
     .done((data) => {
       $('.detailLoading').removeClass('show')
@@ -463,7 +463,7 @@ function init() {
           ajaxing = true
           $('.addLoading').addClass('show')
         },
-        timeout: 5000,
+        timeout: 10000,
       })
         .done((data) => {
           $('.addLoading').removeClass('show')
@@ -540,7 +540,7 @@ function init() {
           ajaxing = true
           $('.addLoading').addClass('show')
         },
-        timeout: 5000,
+        timeout: 10000,
       })
         .done((data) => {
           $('.addLoading').removeClass('show')
