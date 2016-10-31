@@ -122,8 +122,8 @@ function loadDetail(id, page) {
         let tpl = ''
         for (let i = 0; i < items.length; i++) {
           const title = $(items[i]).find(rssObj.title).text()
-          const href = $(items[i]).find(rssObj.link).attr('href')
-          console.log(href)
+          const href = $(items[i]).find(rssObj.link).text() ||
+            $(items[i]).find(rssObj.link).attr('href')
           const content =
             $(items[i]).find(rssObj.description).text().replace(/<\/?[^>]*>/g, '').substr(0, 200)
           const author = $(items[i]).find(rssObj.pubDate).text() || ''
