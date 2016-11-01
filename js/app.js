@@ -46,7 +46,7 @@ function loadDetail(id, page) {
       ajaxing = true
       $('.detailLoading').addClass('show')
     },
-    timeout: 10000,
+    timeout: 15000,
   })
     .done((data) => {
       $('.detailLoading').removeClass('show')
@@ -118,7 +118,8 @@ function loadDetail(id, page) {
           rssObj.pubDate = 'published'
           channel = $(data).find('feed')
         }
-        const items = channel.find(rssObj.items)
+        let items = []
+        channel && (items = channel.find(rssObj.items))
         let tpl = ''
         for (let i = 0; i < items.length; i++) {
           const title = $(items[i]).find(rssObj.title).text()
@@ -463,7 +464,7 @@ function init() {
           ajaxing = true
           $('.addLoading').addClass('show')
         },
-        timeout: 10000,
+        timeout: 15000,
       })
         .done((data) => {
           $('.addLoading').removeClass('show')
@@ -540,7 +541,7 @@ function init() {
           ajaxing = true
           $('.addLoading').addClass('show')
         },
-        timeout: 10000,
+        timeout: 15000,
       })
         .done((data) => {
           $('.addLoading').removeClass('show')
