@@ -56,7 +56,7 @@ function loadDetail(id, page) {
       $('.detailLastTime').html(timeTpl)
       if (theSub.type === 'Crawler') {
         const $c = cheerio.load(data)
-        const items = $c(theSub.newsItem)
+        const items = util.dealItemSelector($c, theSub.newsItem)
         let tpl = ''
         for (let i = 0; i < items.length; i++) {
           try {
