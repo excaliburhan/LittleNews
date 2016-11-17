@@ -46,7 +46,7 @@ function loadDetail(id, page) {
       ajaxing = true
       $('.detailLoading').addClass('show')
     },
-    timeout: 15000,
+    timeout: 15000
   })
     .done((data) => {
       $('.detailLoading').removeClass('show')
@@ -266,7 +266,7 @@ function init() {
       const subIds = store.get('subIds')
       const data = Object.assign({}, subObj, {
         allIds,
-        subIds,
+        subIds
       })
       const writeData = JSON.stringify(data)
       fs.writeFile(filename, writeData, (err) => {
@@ -464,7 +464,7 @@ function init() {
           ajaxing = true
           $('.addLoading').addClass('show')
         },
-        timeout: 15000,
+        timeout: 15000
       })
         .done((data) => {
           $('.addLoading').removeClass('show')
@@ -493,7 +493,7 @@ function init() {
       newsHref: $('.addNewsHref').val(),
       newsImg: $('.addNewsImg').val(),
       newsContent: $('.addNewsContent').val(),
-      newsAuthor: $('.addNewsAuthor').val(),
+      newsAuthor: $('.addNewsAuthor').val()
     }
     const arr = [
       params.type,
@@ -502,7 +502,7 @@ function init() {
       params.url,
       params.newsItem,
       params.newsTitle,
-      params.newsHref,
+      params.newsHref
     ]
     if (add.validate(arr) || params.type === 'FEED') { // rss dont need most params
       if (ajaxing) return
@@ -541,7 +541,7 @@ function init() {
           ajaxing = true
           $('.addLoading').addClass('show')
         },
-        timeout: 15000,
+        timeout: 15000
       })
         .done((data) => {
           $('.addLoading').removeClass('show')
@@ -573,7 +573,7 @@ function init() {
       newsHref: $('.addNewsHref').val(),
       newsImg: $('.addNewsImg').val(),
       newsContent: $('.addNewsContent').val(),
-      newsAuthor: $('.addNewsAuthor').val(),
+      newsAuthor: $('.addNewsAuthor').val()
     }
     const arr = [
       params.type,
@@ -582,7 +582,7 @@ function init() {
       params.url,
       params.newsItem,
       params.newsTitle,
-      params.newsHref,
+      params.newsHref
     ]
     if (add.validate(arr) || params.type === 'FEED') {
       if (ajaxing) return

@@ -125,12 +125,12 @@ module.exports = {
       }
       newObj[id] = Object.assign({}, newObj[id], {
         name,
-        digest,
+        digest
       })
       subObj = Object.assign({}, subObj, newObj)
     }
     store.set('allIds', allIds)
     store.set('subIds', subIds)
     store.set('subObj', subObj)
-  },
+  }
 }
