@@ -10,7 +10,9 @@ A news app via electron
 
 ### for developer
 
+- you need Electron.app(v1.4.3), see [releases](https://github.com/electron/electron/releases)
+- you need electron-packager installed in global
 - `git clone git@github.com:excaliburhan/LittleNews.git yourProjectName`
 - `npm install`
-- download Electron.app(v1.4.3), see [releases](https://github.com/electron/electron/releases)
-- run
+- dev: `npm run dev`
+- build: `npm run dev`

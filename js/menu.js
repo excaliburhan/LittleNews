@@ -73,7 +73,7 @@ module.exports = {
               ipcRenderer.send('dialog', 'export')
             },
           },
-          { type: 'separator' },
+          { type: 'separator', },
           {
             label: 'Undo',
             accelerator: 'CmdOrCtrl+Z',
@@ -84,7 +84,7 @@ module.exports = {
             accelerator: 'Shift+CmdOrCtrl+Z',
             role: 'redo',
           },
-          { type: 'separator' },
+          { type: 'separator', },
           {
             label: 'Cut',
             accelerator: 'CmdOrCtrl+X',
@@ -141,7 +141,7 @@ module.exports = {
               if (focusedWindow) focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
             },
           },
-          { type: 'separator' },
+          { type: 'separator', },
           {
             label: 'Bring All to Front',
             role: 'front',
@@ -172,13 +172,13 @@ module.exports = {
             label: `About ${name}`,
             role: 'about',
           },
-          { type: 'separator' },
+          { type: 'separator', },
           {
             label: 'Services',
             role: 'services',
             submenu: [],
           },
-          { type: 'separator' },
+          { type: 'separator', },
           {
             label: `Hide ${name}`,
             accelerator: 'Command+H',
@@ -193,7 +193,7 @@ module.exports = {
             label: 'Show All',
             role: 'unhide',
           },
-          { type: 'separator' },
+          { type: 'separator', },
           {
             label: 'Quit',
             accelerator: 'Command+Q',
