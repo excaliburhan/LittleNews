@@ -36,16 +36,16 @@ ipcRenderer.on('devReply', (e, arg) => {
           accelerator: 'CmdOrCtrl+R',
           click: (item, focusedWindow) => {
             if (focusedWindow) focusedWindow.reload()
-          }
+          },
         },
         {
           label: 'Toggle Developer Tools',
           accelerator: toggleDevKey,
           click: (item, focusedWindow) => {
             if (focusedWindow) focusedWindow.toggleDevTools()
-          }
-        }
-      ]
+          },
+        },
+      ],
     })
   }
   const Menu = remote.Menu
@@ -64,48 +64,48 @@ module.exports = {
             accelerator: 'CmdOrCtrl+I',
             click: () => {
               ipcRenderer.send('dialog', 'import')
-            }
+            },
           },
           {
             label: 'Export Config File',
             accelerator: 'CmdOrCtrl+E',
             click: () => {
               ipcRenderer.send('dialog', 'export')
-            }
+            },
           },
-          { type: 'separator' },
+          { type: 'separator', },
           {
             label: 'Undo',
             accelerator: 'CmdOrCtrl+Z',
-            role: 'undo'
+            role: 'undo',
           },
           {
             label: 'Redo',
             accelerator: 'Shift+CmdOrCtrl+Z',
-            role: 'redo'
+            role: 'redo',
           },
-          { type: 'separator' },
+          { type: 'separator', },
           {
             label: 'Cut',
             accelerator: 'CmdOrCtrl+X',
-            role: 'cut'
+            role: 'cut',
           },
           {
             label: 'Copy',
             accelerator: 'CmdOrCtrl+C',
-            role: 'copy'
+            role: 'copy',
           },
           {
             label: 'Paste',
             accelerator: 'CmdOrCtrl+V',
-            role: 'paste'
+            role: 'paste',
           },
           {
             label: 'Select All',
             accelerator: 'CmdOrCtrl+A',
-            role: 'selectall'
-          }
-        ]
+            role: 'selectall',
+          },
+        ],
       },
       {
         label: 'Window',
@@ -114,12 +114,12 @@ module.exports = {
           {
             label: 'Close',
             accelerator: 'CmdOrCtrl+W',
-            role: 'close'
+            role: 'close',
           },
           {
             label: 'Minimize',
             accelerator: 'CmdOrCtrl+M',
-            role: 'minimize'
+            role: 'minimize',
           },
           {
             label: 'Toggle Maximize',
@@ -132,21 +132,21 @@ module.exports = {
                   focusedWindow.maximize()
                 }
               }
-            }
+            },
           },
           {
             label: 'Toggle Full Screen',
             accelerator: fullScreenKey,
             click: (item, focusedWindow) => {
               if (focusedWindow) focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
-            }
+            },
           },
-          { type: 'separator' },
+          { type: 'separator', },
           {
             label: 'Bring All to Front',
-            role: 'front'
-          }
-        ]
+            role: 'front',
+          },
+        ],
       },
       {
         label: 'Help',
@@ -156,10 +156,10 @@ module.exports = {
             label: 'Learn More',
             click: () => {
               shell.openExternal('https://github.com/excaliburhan/LittleNews')
-            }
-          }
-        ]
-      }
+            },
+          },
+        ],
+      },
     ]
 
     if (process.platform === 'darwin') {
@@ -170,41 +170,41 @@ module.exports = {
         submenu: [
           {
             label: `About ${name}`,
-            role: 'about'
+            role: 'about',
           },
-          { type: 'separator' },
+          { type: 'separator', },
           {
             label: 'Services',
             role: 'services',
-            submenu: []
+            submenu: [],
           },
-          { type: 'separator' },
+          { type: 'separator', },
           {
             label: `Hide ${name}`,
             accelerator: 'Command+H',
-            role: 'hide'
+            role: 'hide',
           },
           {
             label: 'Hide Others',
             accelerator: 'Command+Alt+H',
-            role: 'hideothers'
+            role: 'hideothers',
           },
           {
             label: 'Show All',
-            role: 'unhide'
+            role: 'unhide',
           },
-          { type: 'separator' },
+          { type: 'separator', },
           {
             label: 'Quit',
             accelerator: 'Command+Q',
             click: () => {
               app.quit()
-            }
-          }
-        ]
+            },
+          },
+        ],
       })
     }
 
     ipcRenderer.send('dev')
-  }
+  },
 }

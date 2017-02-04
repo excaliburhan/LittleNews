@@ -70,5 +70,5 @@ module.exports = {
       item = this.dealSelector(item, param)
     })
     return pattern.replace(/\{.+\}/, item.attr('href'))
-  }
+  },
 }

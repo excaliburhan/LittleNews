@@ -65,5 +65,5 @@ module.exports = {
     store.delete('allIds', id)
     store.delete('subIds', id)
     store.delete('subObj', id)
-  }
+  },
 }
