@@ -1,6 +1,7 @@
 *.DS_Store
 *.log
-node_modules/
+node_modules
+.vscode
 LittleNews-darwin-x64
 LittleNewsDev-darwin-x64
 Electron.app
